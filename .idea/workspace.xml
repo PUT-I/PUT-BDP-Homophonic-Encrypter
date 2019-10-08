@@ -1,28 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5e7a17dd-5a8c-4af3-8631-d7e4252f6a7b" name="Default Changelist" comment="" />
+    <list default="true" id="acee9e05-ef05-4069-a96b-8b4776a6dbf7" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/forms/EditKeyForm.groovy" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/forms/GenerateKeyForm.groovy" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/forms/MainForm.groovy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/$PRODUCT_WORKSPACE_FILE$" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/$PRODUCT_WORKSPACE_FILE$" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gunock/pod/cipher/HomonicCipherGenerator.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/cipher/HomophonicCipherGenerator.groovy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gunock/pod/cipher/HomophonicCipherEncrypter.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/cipher/HomophonicCipherEncrypter.groovy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/gunock/pod/CipherTest.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/gunock/pod/CipherTest.groovy" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ProjectId" id="1RtCMdTL5h9TDMIpdZfeSTn0QPV" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+        <option name="vmOptionsForImporter" value="-Xmx768m" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1Rw03SNYxkNTs74yXXS05zsLbD3" />
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="node.js.detected.package.standard" value="true" />
-    <property name="node.js.path.for.package.eslint" value="project" />
-    <property name="node.js.path.for.package.standard" value="project" />
-    <property name="node.js.selected.package.eslint" value="(autodetect)" />
-    <property name="node.js.selected.package.standard" value="" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="project.structure.last.edited" value="Libraries" />
-    <property name="project.structure.proportion" value="0.0" />
-    <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.folding" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -36,7 +50,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.CipherTest">
+  <component name="RunManager">
     <configuration name="CipherTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.gunock.pod.CipherTest" />
       <module name="lab" />
@@ -50,21 +64,9 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="CipherTest" type="GroovyScriptRunConfiguration" factoryName="Groovy" temporary="true">
-      <module name="lab" />
-      <setting name="path" value="file://$PROJECT_DIR$/src/test/java/com/gunock/pod/CipherTest.groovy" />
-      <setting name="vmparams" value="" />
-      <setting name="params" value="" />
-      <setting name="workDir" value="file://$PROJECT_DIR$/src/test/java/com/gunock/pod" />
-      <setting name="debug" value="false" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.CipherTest" />
-        <item itemvalue="Groovy.CipherTest" />
       </list>
     </recent_temporary>
   </component>
@@ -73,18 +75,27 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="5e7a17dd-5a8c-4af3-8631-d7e4252f6a7b" name="Default Changelist" comment="" />
-      <created>1570476958742</created>
+      <changelist id="acee9e05-ef05-4069-a96b-8b4776a6dbf7" name="Default Changelist" comment="" />
+      <created>1570562651076</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1570476958742</updated>
-      <workItem from="1570476960010" duration="4064000" />
-      <workItem from="1570514459419" duration="4998000" />
-      <workItem from="1570528122448" duration="209000" />
+      <updated>1570562651076</updated>
+      <workItem from="1570562652355" duration="8084000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
