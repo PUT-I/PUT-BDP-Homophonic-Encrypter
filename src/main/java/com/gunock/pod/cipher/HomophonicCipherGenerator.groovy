@@ -1,17 +1,12 @@
 package com.gunock.pod.cipher
 
+import com.gunock.pod.utils.HelperUtil
 import org.json.JSONObject
 
 class HomophonicCipherGenerator {
 
     final static String ENG_ALPHABET = "abcdefghijklmnopqrstuvwxyz,.!?&\"';()1234567890 \n"
     static Set<Character> cipherAlphabet
-
-    static {
-        Set<Character> alph1 = HelperUtil.generateAlphabet(33, 126)
-        Set<Character> alph2 = HelperUtil.generateAlphabet(173, 254)
-        cipherAlphabet = alph1 + alph2
-    }
 
     private static int generateRandomCharacterCount(Character c, Map<Character, Integer> analyzedAlphabet, int maxCharacters) {
         // Average of frequency of every character in analyzed alphabet
@@ -25,9 +20,16 @@ class HomophonicCipherGenerator {
 
         // For characters that are more frequent than average, increase random character number
         if (analyzedAlphabet.get(c) >= analysisAverage) {
-            randomCharNumber *= 2 * (analyzedAlphabet.get(c) / analysisAverage)
+            randomCharNumber *= 2 + (analyzedAlphabet.get(c) / analysisAverage)
         }
         return randomCharNumber
+    }
+
+
+    private static generateCipherAlphabet() {
+        Set<Character> alph1 = HelperUtil.generateAlphabet(33, 126)
+        Set<Character> alph2 = HelperUtil.generateAlphabet(173, 254)
+        cipherAlphabet = alph1 + alph2
     }
 
     static Map<Character, Set<Character>> generateKey(String textExample) {
@@ -36,6 +38,8 @@ class HomophonicCipherGenerator {
     }
 
     static Map<Character, Set<Character>> generateKey(Set<Character> textAlphabet, Set<Character> cipherAlphabet, String textExample) {
+        cipherAlphabet = generateCipherAlphabet()
+
         // Analyzed character frequency to improve generated key
         final Map<Character, Integer> analyzedAlphabet = HelperUtil.analyzeCharactersFrequency(textExample)
         Map<Character, Set<Character>> result = new HashMap<>()

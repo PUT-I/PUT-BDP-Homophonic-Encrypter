@@ -70,7 +70,7 @@ class GenerateKeyForm {
 
     private generateKeyButtonAction(ActionEvent event) {
         Map<Character, Set<Character>> key = HomophonicCipherGenerator.generateKey(fileTextArea.getText())
-        new EditKeyForm(key)
+        new EditKeyForm(frame, key)
     }
 
 }

@@ -1,15 +1,13 @@
 package com.gunock.pod
 
 import com.gunock.pod.cipher.BarChart
-import com.gunock.pod.cipher.HelperUtil
 import com.gunock.pod.cipher.HomophonicCipherEncrypter
 import com.gunock.pod.cipher.HomophonicCipherGenerator
-import com.gunock.pod.forms.EditKeyForm
 import com.gunock.pod.forms.GenerateKeyForm
+import com.gunock.pod.forms.MainForm
+import com.gunock.pod.utils.HelperUtil
 
 import javax.swing.*
-import java.nio.file.Files
-import java.nio.file.Paths
 
 class CipherTest {
 
@@ -57,16 +55,16 @@ class CipherTest {
         String currentDir = System.getProperty("user.dir")
         System.out.println("Current dir using System:" + currentDir)
 
-        String fileText = Files.readString(Paths.get("src/test/resources/lorem-ipsum.txt"))
+        String fileText = HelperUtil.readFile("src/test/resources/lorem-ipsum.txt")
                 .toLowerCase()
                 .replace("\r", "")
 
-        def cipherKey = HomophonicCipherGenerator.generateKey(textAlph, cipherAlph, fileText)
+        def encryptionKey = HomophonicCipherGenerator.generateKey(textAlph, cipherAlph, fileText)
 
         println("Key:")
-        println(cipherKey)
+        println(encryptionKey)
 
-        final String encryptedText = HomophonicCipherEncrypter.encrypt(fileText, cipherKey).toLowerCase()
+        final String encryptedText = HomophonicCipherEncrypter.encrypt(fileText, encryptionKey).toLowerCase()
 
         def analyzedAlphabet = HelperUtil.analyzeCharactersFrequency(fileText)
         def analyzedAlphabetEncrypted = HelperUtil.analyzeCharactersFrequency(encryptedText)
@@ -79,14 +77,16 @@ class CipherTest {
         frameTest(fileText, encryptedText)
     }
 
-    static void editKeyTest(){
-        String fileText = Files.readString(Paths.get("src/test/resources/lorem-ipsum.txt"))
+    static void editKeyTest() {
+        String fileText = HelperUtil.readFile("src/test/resources/lorem-ipsum.txt")
         Map<Character, Set<Character>> key = HomophonicCipherGenerator.generateKey(fileText)
-        new EditKeyForm(key)
+        new GenerateKeyForm()
     }
 
     static void main(String[] args) {
-        editKeyTest()
+        // encryptionTest()
+        // editKeyTest()
+        new MainForm()
         // listenersText()
         // frameTest()
     }

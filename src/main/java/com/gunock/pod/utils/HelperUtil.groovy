@@ -1,5 +1,7 @@
-package com.gunock.pod.cipher
+package com.gunock.pod.utils
 
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.concurrent.ThreadLocalRandom
 
 class HelperUtil {
@@ -15,7 +17,7 @@ class HelperUtil {
     static Set<Character> generateAlphabet(int asciiStart, int asciiEnd) {
         Set<Character> result = new HashSet<>()
         for (char c = asciiStart; c <= asciiEnd; c++) {
-            result.add(c)
+            result.add(c.toString().toCharArray()[0])
         }
         return result
     }
@@ -46,6 +48,15 @@ class HelperUtil {
         }
 
         return result
+    }
+
+    static String readFile(String path) throws FileNotFoundException {
+        return Files.readString(Paths.get(path))
+    }
+
+    static void writeFile(String path, String text) {
+        File file = new File(path)
+        file.write(text)
     }
 
 }

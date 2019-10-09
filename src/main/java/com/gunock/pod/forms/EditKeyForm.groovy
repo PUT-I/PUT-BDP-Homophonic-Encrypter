@@ -1,6 +1,8 @@
 package com.gunock.pod.forms
 
 import com.gunock.pod.cipher.HomophonicCipherEncrypter
+import com.gunock.pod.utils.HelperUtil
+import org.json.JSONObject
 
 import javax.swing.*
 import javax.swing.event.DocumentEvent
@@ -10,15 +12,38 @@ import javax.swing.text.AttributeSet
 import javax.swing.text.BadLocationException
 import javax.swing.text.DocumentFilter
 import java.awt.*
+import java.awt.event.ActionEvent
+import java.awt.event.ActionListener
+import java.awt.event.WindowEvent
 
 class EditKeyForm {
 
     private JFrame frame
-    private Map<Character, Set<Character>> cipherKey
+    private Map<Character, Set<Character>> encryptionKey
 
-    EditKeyForm(Map<Character, Set<Character>> key) {
-        cipherKey = key
+    EditKeyForm(JFrame parent, Map<Character, Set<Character>> key) {
+        encryptionKey = key
         frame = new JFrame("Edit key")
+
+        JPanel buttonPanel = new JPanel()
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS))
+        JTextField filenameField = new JTextField("key.json")
+        JButton saveButton = new JButton("Save key")
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            void actionPerformed(ActionEvent e) {
+                JSONObject json = new JSONObject(encryptionKey)
+                HelperUtil.writeFile(filenameField.getText(), json.toString())
+                frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING))
+                if (parent != null) {
+                    parent.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING))
+                }
+            }
+        })
+
+        buttonPanel.add(saveButton)
+        buttonPanel.add(filenameField)
+        frame.getContentPane().add(buttonPanel)
 
         mapToFrameElements(key)
 
@@ -106,7 +131,7 @@ class EditKeyForm {
 
         ArrayList<String> valuesTable = Arrays.asList(values.split(", "))
 
-        cipherKey.get(charKey).clear()
+        encryptionKey.get(charKey).clear()
         if (valuesTable.size() == 0) {
             println("values empty")
             return
@@ -114,14 +139,14 @@ class EditKeyForm {
             return
         }
         for (String value : valuesTable) {
-            cipherKey.get(charKey).add(value.charAt(0))
+            encryptionKey.get(charKey).add(value.charAt(0))
         }
     }
 
     class KeyFilter extends DocumentFilter {
         @Override
         void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-            Map<Character, Character> reversedKey = HomophonicCipherEncrypter.reverseKey(cipherKey)
+            Map<Character, Character> reversedKey = HomophonicCipherEncrypter.reverseKey(encryptionKey)
             String documentText = fb.getDocument().getText(0, fb.getDocument().getLength())
             if (reversedKey.containsKey(text.charAt(0)) || documentText.contains(text) || text == ' ') {
                 return
