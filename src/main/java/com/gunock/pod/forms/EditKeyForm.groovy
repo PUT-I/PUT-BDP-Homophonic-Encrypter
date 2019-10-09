@@ -3,26 +3,28 @@ package com.gunock.pod.forms
 import com.gunock.pod.cipher.HomophonicCipherEncrypter
 
 import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
+import javax.swing.text.AbstractDocument
+import javax.swing.text.AttributeSet
+import javax.swing.text.BadLocationException
+import javax.swing.text.DocumentFilter
 import java.awt.*
-import java.awt.event.ActionEvent
-import java.awt.event.ActionListener
-import java.awt.event.KeyEvent
-import java.awt.event.KeyListener
 
 class EditKeyForm {
 
     private JFrame frame
-    private Map<Character, Set<Character>> key
+    private Map<Character, Set<Character>> cipherKey
 
     EditKeyForm(Map<Character, Set<Character>> key) {
-        this.key = key
+        cipherKey = key
         frame = new JFrame("Edit key")
 
         mapToFrameElements(key)
 
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS))
-        frame.setSize(800, 800)
-        frame.setMinimumSize(new Dimension(480, 800))
+        frame.setSize(400, 800)
+        frame.setResizable(false)
         frame.setVisible(true)
     }
 
@@ -43,7 +45,7 @@ class EditKeyForm {
             } else if (keyText == '\n') {
                 keyText = '\\n'
             }
-            JLabel keyLabel = new JLabel(' ' + keyText)
+            JLabel keyLabel = new JLabel(keyText)
             JTextField keyValues = new JTextField(
                     key.get(keyEntry)
                             .toString()
@@ -59,21 +61,32 @@ class EditKeyForm {
             valuesConstraints.gridy = yPos
             valuesConstraints.gridx = 40
             valuesConstraints.anchor = GridBagConstraints.WEST
-            keyValues.addKeyListener(new KeyListener() {
+            keyValues.setPreferredSize(new Dimension(250, 20))
+            keyValues.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
-                void keyTyped(KeyEvent e) {
+                void insertUpdate(DocumentEvent e) {
                 }
 
                 @Override
-                void keyPressed(KeyEvent e) {
-                    editTextFieldAction(e)
+                void removeUpdate(DocumentEvent e) {
+                    Runnable remove = new Runnable() {
+                        @Override
+                        void run() {
+                            final String text = keyValues.getText()
+                            if (text.length() > 3) {
+                                keyValues.setText(text.substring(0, text.length() - 2))
+                            }
+                        }
+                    }
+                    SwingUtilities.invokeLater(remove)
                 }
 
                 @Override
-                void keyReleased(KeyEvent e) {
-
+                void changedUpdate(DocumentEvent e) {
                 }
             })
+            keyValues.getDocument().putProperty("label", keyLabel)
+            ((AbstractDocument) keyValues.getDocument()).setDocumentFilter(new KeyFilter())
             keyPanel.add(keyValues, valuesConstraints)
 
             yPos++
@@ -81,23 +94,62 @@ class EditKeyForm {
         frame.getContentPane().add(scrollPane)
     }
 
-    void editTextFieldAction(KeyEvent keyEvent) {
-        JTextField textField = (JTextField) keyEvent.getComponent()
-        if (keyEvent.getKeyChar() == (char) 8) {
-            if (textField.getText().length() > 3) {
-                String text = textField.getText()
-                textField.setText(text.substring(0, text.length() - 2))
+    void updateKey(String key, String values) {
+        Character charKey = key.charAt(0)
+        if (key.length() > 1) {
+            if (key == "\\n") {
+                charKey = '\n'
+            } else if (key == "\\s") {
+                charKey = ' '
             }
-        } else if (keyEvent.getKeyCode() >= 37 && keyEvent.getKeyCode() <= 40) {
-        } else if (keyEvent.getKeyChar() >= '!'.toCharacter()) {
-            String text = textField.getText()
-            String newText = text
-            if (!text.isBlank()) {
-                newText = text + ", "
-            }
+        }
 
-            textField.setText(newText)
+        ArrayList<String> valuesTable = Arrays.asList(values.split(", "))
+
+        cipherKey.get(charKey).clear()
+        if (valuesTable.size() == 0) {
+            println("values empty")
+            return
+        } else if (valuesTable.size() == 1 && valuesTable.get(0) == '') {
+            return
+        }
+        for (String value : valuesTable) {
+            cipherKey.get(charKey).add(value.charAt(0))
         }
     }
 
+    class KeyFilter extends DocumentFilter {
+        @Override
+        void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+            Map<Character, Character> reversedKey = HomophonicCipherEncrypter.reverseKey(cipherKey)
+            String documentText = fb.getDocument().getText(0, fb.getDocument().getLength())
+            if (reversedKey.containsKey(text.charAt(0)) || documentText.contains(text) || text == ' ') {
+                return
+            } else if (documentText.length() > 0) {
+                super.insertString(fb, offset, ', ' + text, attrs)
+            } else {
+                super.replace(fb, offset, length, text, attrs)
+            }
+
+            String labelText = ((JLabel) fb.getDocument().getProperty("label")).getText()
+
+            updateKey(labelText, fb.getDocument().getText(0, fb.getDocument().getLength()))
+        }
+
+        @Override
+        void insertString(FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
+        }
+
+        @Override
+        void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+            if (fb.getDocument().getLength() > 1) {
+                super.remove(fb, offset - 2, length + 2)
+            } else {
+                super.remove(fb, offset, length)
+            }
+
+            String labelText = ((JLabel) fb.getDocument().getProperty("label")).getText()
+            updateKey(labelText, fb.getDocument().getText(0, fb.getDocument().getLength()))
+        }
+    }
 }
