@@ -1,4 +1,4 @@
-package com.gunock.pod
+package com.gunock.pod.tests
 
 import com.gunock.pod.cipher.BarChart
 import com.gunock.pod.cipher.HomophonicCipherEncrypter
@@ -10,6 +10,8 @@ import com.gunock.pod.utils.HelperUtil
 import javax.swing.*
 
 class CipherTest {
+
+    private static JFrame frame
 
     static void generateKeyFrame() {
         new GenerateKeyForm()
@@ -66,8 +68,8 @@ class CipherTest {
 
         final String encryptedText = HomophonicCipherEncrypter.encrypt(fileText, encryptionKey).toLowerCase()
 
-        def analyzedAlphabet = HelperUtil.analyzeCharactersFrequency(fileText)
-        def analyzedAlphabetEncrypted = HelperUtil.analyzeCharactersFrequency(encryptedText)
+        Map<Character, Integer> analyzedAlphabet = HelperUtil.analyzeCharactersFrequency(fileText)
+        Map<Character, Integer> analyzedAlphabetEncrypted = HelperUtil.analyzeCharactersFrequency(encryptedText)
         println(analyzedAlphabet)
         println(analyzedAlphabetEncrypted)
 
@@ -78,15 +80,13 @@ class CipherTest {
     }
 
     static void editKeyTest() {
-        String fileText = HelperUtil.readFile("src/test/resources/lorem-ipsum.txt")
-        Map<Character, Set<Character>> key = HomophonicCipherGenerator.generateKey(fileText)
-        new GenerateKeyForm()
+        GenerateKeyForm.construct()
     }
 
     static void main(String[] args) {
         // encryptionTest()
         // editKeyTest()
-        new MainForm()
+        MainForm.create()
         // listenersText()
         // frameTest()
     }

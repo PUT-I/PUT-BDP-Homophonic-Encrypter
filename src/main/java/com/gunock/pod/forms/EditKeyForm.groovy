@@ -1,6 +1,7 @@
 package com.gunock.pod.forms
 
 import com.gunock.pod.cipher.HomophonicCipherEncrypter
+import com.gunock.pod.utils.FormUtil
 import com.gunock.pod.utils.HelperUtil
 import org.json.JSONObject
 
@@ -15,45 +16,122 @@ import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.event.WindowEvent
+import java.awt.event.WindowListener
 
 class EditKeyForm {
 
-    private JFrame frame
-    private Map<Character, Set<Character>> encryptionKey
+    private static JFrame frame
+    private static Map<Character, Set<Character>> encryptionKey
 
-    EditKeyForm(JFrame parent, Map<Character, Set<Character>> key) {
+    static void construct(Map<Character, Set<Character>> key) {
         encryptionKey = key
-        frame = new JFrame("Edit key")
+        create()
+        frame.setVisible(true)
+    }
+
+    static void create() {
 
         JPanel buttonPanel = new JPanel()
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS))
+
         JTextField filenameField = new JTextField("key.json")
+
         JButton saveButton = new JButton("Save key")
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            void actionPerformed(ActionEvent e) {
-                JSONObject json = new JSONObject(encryptionKey)
-                HelperUtil.writeFile(filenameField.getText(), json.toString())
-                frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING))
-                if (parent != null) {
-                    parent.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING))
-                }
-            }
-        })
+        saveButton.addActionListener(saveButtonAction(filenameField))
 
         buttonPanel.add(saveButton)
         buttonPanel.add(filenameField)
-        frame.getContentPane().add(buttonPanel)
 
-        mapToFrameElements(key)
+        frame = new JFrame("Edit key")
+        frame.getContentPane().add(buttonPanel)
+        frame.addWindowListener(onCloseAction())
+
+        mapToFrameElements(encryptionKey)
 
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS))
         frame.setSize(400, 800)
         frame.setResizable(false)
-        frame.setVisible(true)
     }
 
-    void mapToFrameElements(Map<Character, Set<Character>> key) {
+    static void close() {
+        if (frame != null) {
+            FormUtil.close(frame)
+        }
+    }
+
+    private static WindowListener onCloseAction() {
+        new WindowListener() {
+            @Override
+            void windowOpened(WindowEvent e) {
+            }
+
+            @Override
+            void windowClosing(WindowEvent e) {
+                GenerateKeyForm.setVisible(true)
+            }
+
+            @Override
+            void windowClosed(WindowEvent e) {
+            }
+
+            @Override
+            void windowIconified(WindowEvent e) {
+            }
+
+            @Override
+            void windowDeiconified(WindowEvent e) {
+            }
+
+            @Override
+            void windowActivated(WindowEvent e) {
+            }
+
+            @Override
+            void windowDeactivated(WindowEvent e) {
+            }
+        }
+    }
+
+    static ActionListener saveButtonAction(JTextField filenameField) {
+        return new ActionListener() {
+            @Override
+            void actionPerformed(ActionEvent e) {
+                JSONObject json = new JSONObject(encryptionKey)
+                HelperUtil.writeFile(filenameField.getText(), json.toString())
+                close()
+                GenerateKeyForm.close()
+                MainForm.setVisible(true)
+            }
+        }
+    }
+
+    private static DocumentListener keyValuesTextFieldListener(JTextField keyValues) {
+        return new DocumentListener() {
+            @Override
+            void insertUpdate(DocumentEvent e) {
+            }
+
+            @Override
+            void removeUpdate(DocumentEvent e) {
+                Runnable remove = new Runnable() {
+                    @Override
+                    void run() {
+                        final String text = keyValues.getText()
+                        if (text.length() > 3) {
+                            keyValues.setText(text.substring(0, text.length() - 2))
+                        }
+                    }
+                }
+                SwingUtilities.invokeLater(remove)
+            }
+
+            @Override
+            void changedUpdate(DocumentEvent e) {
+            }
+        }
+    }
+
+    static void mapToFrameElements(Map<Character, Set<Character>> key) {
         JPanel keyPanel = new JPanel()
         keyPanel.setLayout(new GridBagLayout())
         GridBagConstraints labelConstraints = new GridBagConstraints()
@@ -119,7 +197,7 @@ class EditKeyForm {
         frame.getContentPane().add(scrollPane)
     }
 
-    void updateKey(String key, String values) {
+    private static void updateKey(String key, String values) {
         Character charKey = key.charAt(0)
         if (key.length() > 1) {
             if (key == "\\n") {
@@ -143,7 +221,7 @@ class EditKeyForm {
         }
     }
 
-    class KeyFilter extends DocumentFilter {
+    private static class KeyFilter extends DocumentFilter {
         @Override
         void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
             Map<Character, Character> reversedKey = HomophonicCipherEncrypter.reverseKey(encryptionKey)
