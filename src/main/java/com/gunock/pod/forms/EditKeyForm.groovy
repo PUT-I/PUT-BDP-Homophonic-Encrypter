@@ -1,5 +1,6 @@
 package com.gunock.pod.forms
 
+import com.gunock.pod.cipher.BarChart
 import com.gunock.pod.cipher.HomophonicCipherEncrypter
 import com.gunock.pod.utils.FormUtil
 import com.gunock.pod.utils.HelperUtil
@@ -21,26 +22,33 @@ import java.awt.event.WindowListener
 class EditKeyForm {
 
     private static JFrame frame
+    private static JFrame chartFrame
     private static Map<Character, Set<Character>> encryptionKey
+    private static String exampleText
 
-    static void construct(Map<Character, Set<Character>> key) {
+    static void construct(int x, int y, Map<Character, Set<Character>> key, String text) {
         encryptionKey = key
+        exampleText = text
         create()
+        frame.setLocation(x, y)
         frame.setVisible(true)
     }
 
     static void create() {
-
-        JPanel buttonPanel = new JPanel()
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS))
-
         JTextField filenameField = new JTextField("key.json")
 
-        JButton saveButton = new JButton("Save key")
-        saveButton.addActionListener(saveButtonAction(filenameField))
+        JPanel saveButtonPanel = new JPanel()
+        FormUtil.setBoxLayout(saveButtonPanel, BoxLayout.X_AXIS)
+        FormUtil.addButton(saveButtonPanel, "Save Key", saveButtonAction(filenameField))
+        saveButtonPanel.add(filenameField)
 
-        buttonPanel.add(saveButton)
-        buttonPanel.add(filenameField)
+        JPanel chartsButtonPanel = new JPanel()
+        chartsButtonPanel.setLayout(new FlowLayout())
+        FormUtil.addButton(chartsButtonPanel, "Show Frequency Charts", chartsButtonAction())
+
+        JPanel buttonPanel = new JPanel()
+        FormUtil.setBoxLayout(buttonPanel, BoxLayout.Y_AXIS)
+        FormUtil.addAllComponents(buttonPanel, [saveButtonPanel, chartsButtonPanel])
 
         frame = new JFrame("Edit key")
         frame.getContentPane().add(buttonPanel)
@@ -51,6 +59,39 @@ class EditKeyForm {
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS))
         frame.setSize(400, 800)
         frame.setResizable(false)
+    }
+
+    static ActionListener chartsButtonAction() {
+        return new ActionListener() {
+            @Override
+            void actionPerformed(ActionEvent e) {
+                final String encryptedText = HomophonicCipherEncrypter.encrypt(exampleText, encryptionKey)
+
+                Map<Character, Integer> analyzedAlphabet = HelperUtil.analyzeCharactersFrequency(exampleText.toLowerCase())
+                Map<Character, Integer> analyzedAlphabetEncrypted = HelperUtil.analyzeCharactersFrequency(encryptedText)
+
+                new Thread(new Runnable() {
+                    @Override
+                    void run() {
+                        FormUtil.close(chartFrame)
+                        JFrame originalTextChart = BarChart.getChart(analyzedAlphabet, "Original Text")
+                        JFrame encryptedTextChart = BarChart.getChart(analyzedAlphabetEncrypted, "Encrypted Text")
+
+                        chartFrame = new JFrame()
+                        FormUtil.setBoxLayout(chartFrame.getContentPane() as JComponent, BoxLayout.Y_AXIS)
+
+                        chartFrame.add(originalTextChart.getContentPane().getComponent(0))
+                        chartFrame.add(encryptedTextChart.getContentPane().getComponent(0))
+                        chartFrame.setSize(1000, 800)
+                        chartFrame.setTitle("Character frequency chart comparison")
+                        chartFrame.setVisible(true)
+
+                        FormUtil.close(originalTextChart)
+                        FormUtil.close(encryptedTextChart)
+                    }
+                }).start()
+            }
+        }
     }
 
     static void close() {
@@ -67,6 +108,7 @@ class EditKeyForm {
 
             @Override
             void windowClosing(WindowEvent e) {
+                FormUtil.close(chartFrame)
                 GenerateKeyForm.setVisible(true)
             }
 
@@ -101,32 +143,6 @@ class EditKeyForm {
                 close()
                 GenerateKeyForm.close()
                 MainForm.setVisible(true)
-            }
-        }
-    }
-
-    private static DocumentListener keyValuesTextFieldListener(JTextField keyValues) {
-        return new DocumentListener() {
-            @Override
-            void insertUpdate(DocumentEvent e) {
-            }
-
-            @Override
-            void removeUpdate(DocumentEvent e) {
-                Runnable remove = new Runnable() {
-                    @Override
-                    void run() {
-                        final String text = keyValues.getText()
-                        if (text.length() > 3) {
-                            keyValues.setText(text.substring(0, text.length() - 2))
-                        }
-                    }
-                }
-                SwingUtilities.invokeLater(remove)
-            }
-
-            @Override
-            void changedUpdate(DocumentEvent e) {
             }
         }
     }

@@ -2,6 +2,6 @@ package com.gunock.pod.cipher
 
 class HomophonicCipher {
 
-    public Map<String, List<String>> alphabet;
+    public Map<String, List<String>> alphabet
 
 }

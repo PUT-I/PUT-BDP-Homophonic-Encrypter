@@ -66,27 +66,27 @@ class CipherTest {
         println("Key:")
         println(encryptionKey)
 
-        final String encryptedText = HomophonicCipherEncrypter.encrypt(fileText, encryptionKey).toLowerCase()
+        final String encryptedText = HomophonicCipherEncrypter.encrypt(fileText, encryptionKey)
 
         Map<Character, Integer> analyzedAlphabet = HelperUtil.analyzeCharactersFrequency(fileText)
         Map<Character, Integer> analyzedAlphabetEncrypted = HelperUtil.analyzeCharactersFrequency(encryptedText)
         println(analyzedAlphabet)
         println(analyzedAlphabetEncrypted)
 
-        BarChart.displayChart(analyzedAlphabet, "File text")
-        BarChart.displayChart(analyzedAlphabetEncrypted, "Encrypted text")
+        BarChart.getChart(analyzedAlphabet, "File text")
+        BarChart.getChart(analyzedAlphabetEncrypted, "Encrypted text")
 
         frameTest(fileText, encryptedText)
     }
 
     static void editKeyTest() {
-        GenerateKeyForm.construct()
+        GenerateKeyForm.construct(frame.getX(), frame.getY())
     }
 
     static void main(String[] args) {
         // encryptionTest()
         // editKeyTest()
-        MainForm.create()
+        MainForm.construct()
         // listenersText()
         // frameTest()
     }

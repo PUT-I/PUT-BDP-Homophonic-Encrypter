@@ -6,24 +6,24 @@ import org.knowm.xchart.CategoryChartBuilder
 import org.knowm.xchart.SwingWrapper
 import org.knowm.xchart.style.Styler
 
+import javax.swing.*
+
 class BarChart {
 
-    static void main(String[] args) {
-        displayChart(["a", "c", "d", "e", "f"] as List, [4, 5, 9, 6, 5] as List, "Test 1")
-    }
-
-    static void displayChart(Map<Character, Integer> values, String title) {
+    static JFrame getChart(Map<Character, Integer> values, String title) {
         final List<String> keys = HelperUtil.characterSetToStringList(values.keySet())
-        displayChart(keys, values.values() as List, title)
+        return getChart(keys, values.values() as List, title)
     }
 
-    static void displayChart(List<String> keys, List<Integer> values, String title) {
-        CategoryChart chart = getChart(keys, values, title)
-        new SwingWrapper<>(chart).displayChart()
+    static JFrame getChart(List<String> keys, List<Integer> values, String title) {
+        CategoryChart chart = createChart(keys, values, title)
+        JFrame chartFrame = new SwingWrapper<>(chart).displayChart()
+        chartFrame.setVisible(false)
+        chartFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE)
+        return chartFrame
     }
 
-    static CategoryChart getChart(List<String> keys, List<Integer> values, String title) {
-
+    static CategoryChart createChart(List<String> keys, List<Integer> values, String title) {
         // Create Chart
         CategoryChart chart = new CategoryChartBuilder()
                 .width(800)
