@@ -1,14 +1,13 @@
 package com.gunock.pod.forms
 
-import com.gunock.pod.cipher.HomophonicCipherGenerator
+import com.gunock.pod.cipher.EncryptionKey
+import com.gunock.pod.cipher.KeyGenerator
 import com.gunock.pod.utils.FormUtil
 
 import javax.swing.*
 import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
-import java.awt.event.WindowEvent
-import java.awt.event.WindowListener
 
 class GenerateKeyForm {
 
@@ -54,7 +53,7 @@ class GenerateKeyForm {
 
         frame = new JFrame("Generate key")
         FormUtil.addAllComponents(frame.getContentPane() as JComponent, [buttonPanel, fileTextAreaPanel])
-        frame.addWindowListener(onCloseAction())
+        frame.addWindowListener(FormUtil.onWindowCloseAction(MainForm.getFrame()))
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS))
         frame.setSize(new Dimension(480, 800))
         frame.setMinimumSize(new Dimension(480, 800))
@@ -71,78 +70,12 @@ class GenerateKeyForm {
         frame.setVisible(visible)
     }
 
-    private static WindowListener onCloseAction() {
-        new WindowListener() {
-            @Override
-            void windowOpened(WindowEvent e) {
-            }
-
-            @Override
-            void windowClosing(WindowEvent e) {
-                MainForm.setVisible(true)
-            }
-
-            @Override
-            void windowClosed(WindowEvent e) {
-            }
-
-            @Override
-            void windowIconified(WindowEvent e) {
-            }
-
-            @Override
-            void windowDeiconified(WindowEvent e) {
-            }
-
-            @Override
-            void windowActivated(WindowEvent e) {
-            }
-
-            @Override
-            void windowDeactivated(WindowEvent e) {
-            }
-        }
-    }
-
-    private static WindowListener fileChooserOnCloseAction(JFrame mainFrame) {
-        new WindowListener() {
-            @Override
-            void windowOpened(WindowEvent e) {
-            }
-
-            @Override
-            void windowClosing(WindowEvent e) {
-                mainFrame.setVisible(true)
-            }
-
-            @Override
-            void windowClosed(WindowEvent e) {
-            }
-
-            @Override
-            void windowIconified(WindowEvent e) {
-            }
-
-            @Override
-            void windowDeiconified(WindowEvent e) {
-            }
-
-            @Override
-            void windowActivated(WindowEvent e) {
-            }
-
-            @Override
-            void windowDeactivated(WindowEvent e) {
-            }
-        }
-    }
-
     private static ActionListener loadFileButtonAction() {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent event) {
                 fileChooserFrame.setSize(480, 600)
-                fileChooserFrame.addWindowListener(fileChooserOnCloseAction(frame))
+                fileChooserFrame.addWindowListener(FormUtil.onWindowCloseAction(frame))
                 frame.setVisible(false)
                 fileChooserFrame.setLocation(frame.getX(), frame.getY())
                 fileChooserFrame.setVisible(true)
@@ -155,7 +88,7 @@ class GenerateKeyForm {
             @Override
             void actionPerformed(ActionEvent event) {
                 String fileText = FormUtil.getTextAreaFromPanelWithTitle(fileTextAreaPanel).getText()
-                Map<Character, Set<Character>> key = HomophonicCipherGenerator.generateKey(fileText)
+                EncryptionKey key = KeyGenerator.generateKey(fileText)
                 EditKeyForm.construct(frame.getX(), frame.getY(), key, fileText)
                 frame.setVisible(false)
             }

@@ -4,6 +4,7 @@ import javax.swing.*
 import javax.swing.border.BevelBorder
 import java.awt.event.ActionListener
 import java.awt.event.WindowEvent
+import java.awt.event.WindowListener
 
 class FormUtil {
 
@@ -64,6 +65,39 @@ class FormUtil {
     static void addAllComponents(JComponent parent, List<JComponent> components) {
         for (JComponent component : components) {
             parent.add(component)
+        }
+    }
+
+    static WindowListener onWindowCloseAction(JFrame previousFrame) {
+        return new WindowListener() {
+            @Override
+            void windowOpened(WindowEvent e) {
+            }
+
+            @Override
+            void windowClosing(WindowEvent e) {
+                previousFrame.setVisible(true)
+            }
+
+            @Override
+            void windowClosed(WindowEvent e) {
+            }
+
+            @Override
+            void windowIconified(WindowEvent e) {
+            }
+
+            @Override
+            void windowDeiconified(WindowEvent e) {
+            }
+
+            @Override
+            void windowActivated(WindowEvent e) {
+            }
+
+            @Override
+            void windowDeactivated(WindowEvent e) {
+            }
         }
     }
 

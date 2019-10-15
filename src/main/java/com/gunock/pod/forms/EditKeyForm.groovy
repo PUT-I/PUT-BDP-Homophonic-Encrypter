@@ -1,7 +1,8 @@
 package com.gunock.pod.forms
 
 import com.gunock.pod.cipher.BarChart
-import com.gunock.pod.cipher.HomophonicCipherEncrypter
+import com.gunock.pod.cipher.Encrypter
+import com.gunock.pod.cipher.EncryptionKey
 import com.gunock.pod.utils.FormUtil
 import com.gunock.pod.utils.HelperUtil
 import org.json.JSONObject
@@ -23,10 +24,10 @@ class EditKeyForm {
 
     private static JFrame frame
     private static JFrame chartFrame
-    private static Map<Character, Set<Character>> encryptionKey
+    private static EncryptionKey encryptionKey
     private static String exampleText
 
-    static void construct(int x, int y, Map<Character, Set<Character>> key, String text) {
+    static void construct(int x, int y, EncryptionKey key, String text) {
         encryptionKey = key
         exampleText = text
         create()
@@ -65,7 +66,7 @@ class EditKeyForm {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent e) {
-                final String encryptedText = HomophonicCipherEncrypter.encrypt(exampleText, encryptionKey)
+                final String encryptedText = Encrypter.encrypt(exampleText, encryptionKey)
 
                 Map<Character, Integer> analyzedAlphabet = HelperUtil.analyzeCharactersFrequency(exampleText.toLowerCase())
                 Map<Character, Integer> analyzedAlphabetEncrypted = HelperUtil.analyzeCharactersFrequency(encryptedText)
@@ -147,7 +148,7 @@ class EditKeyForm {
         }
     }
 
-    static void mapToFrameElements(Map<Character, Set<Character>> key) {
+    static void mapToFrameElements(EncryptionKey encryptionKey) {
         JPanel keyPanel = new JPanel()
         keyPanel.setLayout(new GridBagLayout())
         GridBagConstraints labelConstraints = new GridBagConstraints()
@@ -157,7 +158,7 @@ class EditKeyForm {
 
         keyPanel.setMaximumSize(new Dimension(10, 100))
         JScrollPane scrollPane = new JScrollPane(keyPanel)
-        for (Character keyEntry : key.keySet()) {
+        for (Character keyEntry : encryptionKey.keySet()) {
             String keyText = keyEntry.toString()
             if (keyText == ' ') {
                 keyText = '\\s'
@@ -166,7 +167,7 @@ class EditKeyForm {
             }
             JLabel keyLabel = new JLabel(keyText)
             JTextField keyValues = new JTextField(
-                    key.get(keyEntry)
+                    encryptionKey.get(keyEntry)
                             .toString()
                             .replace("[", "")
                             .replace("]", "")
@@ -180,7 +181,7 @@ class EditKeyForm {
             valuesConstraints.gridy = yPos
             valuesConstraints.gridx = 40
             valuesConstraints.anchor = GridBagConstraints.WEST
-            keyValues.setPreferredSize(new Dimension(250, 20))
+            keyValues.setPreferredSize(new Dimension(300, 20))
             keyValues.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
                 void insertUpdate(DocumentEvent e) {
@@ -240,7 +241,7 @@ class EditKeyForm {
     private static class KeyFilter extends DocumentFilter {
         @Override
         void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-            Map<Character, Character> reversedKey = HomophonicCipherEncrypter.reverseKey(encryptionKey)
+            Map<Character, Character> reversedKey = Encrypter.reverseKey(encryptionKey)
             String documentText = fb.getDocument().getText(0, fb.getDocument().getLength())
             if (reversedKey.containsKey(text.charAt(0)) || documentText.contains(text) || text == ' ') {
                 return

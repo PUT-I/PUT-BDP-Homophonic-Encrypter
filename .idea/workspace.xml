@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5e7a17dd-5a8c-4af3-8631-d7e4252f6a7b" name="Default Changelist" comment="Changed forms to static classes">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/utils/FormUtil.groovy" afterDir="false" />
+    <list default="true" id="acee9e05-ef05-4069-a96b-8b4776a6dbf7" name="Default Changelist" comment="CR changes">
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/lab/META-INF/lab.kotlin_module" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/test/lab/lorem-ipsum.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gunock/pod/cipher/BarChart.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/cipher/BarChart.groovy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gunock/pod/cipher/HomophonicCipher.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/cipher/EncryptionKey.groovy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gunock/pod/cipher/HomophonicCipherEncrypter.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/cipher/Encrypter.groovy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gunock/pod/cipher/HomophonicCipherGenerator.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/cipher/KeyGenerator.groovy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/gunock/pod/forms/EditKeyForm.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/forms/EditKeyForm.groovy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gunock/pod/forms/EncryptionForm.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/forms/EncryptionForm.groovy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/gunock/pod/forms/GenerateKeyForm.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/forms/GenerateKeyForm.groovy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/gunock/pod/forms/MainForm.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/forms/MainForm.groovy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/gunock/pod/CipherTest.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/gunock/pod/tests/CipherTest.groovy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/gunock/pod/utils/FormUtil.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gunock/pod/utils/FormUtil.groovy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/gunock/pod/features/HomophonicCipher.feature" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/gunock/pod/features/steps/HomophonicCipherStep.groovy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/gunock/pod/runners/HomophonicCipherTest.groovy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/gunock/pod/tests/CipherTest.groovy" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/gunock/pod/tests/CipherTest.groovy" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -109,7 +116,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Changed forms to static classes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed forms to static classes" />
+    <MESSAGE value="CR changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="CR changes" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
