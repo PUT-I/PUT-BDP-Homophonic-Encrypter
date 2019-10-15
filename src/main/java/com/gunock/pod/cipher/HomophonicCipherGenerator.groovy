@@ -12,7 +12,7 @@ class HomophonicCipherGenerator {
         // Average of frequency of every character in analyzed alphabet
         final int analysisAverage = analyzedAlphabet.values().sum() / analyzedAlphabet.size()
 
-        if(maxCharacters < 1){
+        if (maxCharacters < 1) {
             maxCharacters = 1
         }
 
@@ -33,7 +33,14 @@ class HomophonicCipherGenerator {
     }
 
     static Map<Character, Set<Character>> generateKey(String textExample) {
-        final Set<Character> textAlphabet = HelperUtil.deduceAlphabet(ENG_ALPHABET)
+        StringBuilder alphabetBuilder = new StringBuilder(ENG_ALPHABET)
+        for (Character c : textExample.toCharArray()) {
+            if (!alphabetBuilder.contains(c.toString())) {
+                alphabetBuilder.append(c)
+            }
+        }
+
+        final Set<Character> textAlphabet = HelperUtil.deduceAlphabet(alphabetBuilder.toString())
         return generateKey(textAlphabet, cipherAlphabet, textExample)
     }
 

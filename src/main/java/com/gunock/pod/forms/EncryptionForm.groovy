@@ -1,7 +1,9 @@
 package com.gunock.pod.forms
 
+import com.gunock.pod.cipher.BarChart
 import com.gunock.pod.cipher.HomophonicCipherEncrypter
 import com.gunock.pod.utils.FormUtil
+import com.gunock.pod.utils.HelperUtil
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -19,6 +21,7 @@ class EncryptionForm {
 
     static JFrame frame
     static JFrame fileChooserFrame
+    private static JFrame chartFrame
     static JLabel keyStatusLabel
     static JPanel originalTextPanel
     static JPanel encryptedTextPanel
@@ -28,6 +31,8 @@ class EncryptionForm {
 
     static void construct(int x, int y) {
         create()
+        y = y - frame.getHeight() / 2 as int
+        y = y < 0 ? 0 : y
         frame.setLocation(x, y)
         frame.setVisible(true)
     }
@@ -40,6 +45,7 @@ class EncryptionForm {
         FormUtil.addButton(buttonPanel, "Load Encryption Key", loadKeyButtonAction())
         FormUtil.addButton(buttonPanel, "Encrypt Text", encryptTextButtonAction())
         FormUtil.addButton(buttonPanel, "Decrypt Text", decryptTextButtonAction())
+        FormUtil.addButton(buttonPanel, "Show Frequency Charts", chartsButtonAction())
 
         keyStatusLabel = new JLabel("    Not loaded    ")
         keyStatusLabel.setBorder(new TitledBorder(new LineBorder(Color.GRAY, 5), "Key Status"))
@@ -64,6 +70,40 @@ class EncryptionForm {
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS))
         frame.setSize(1000, 800)
         frame.setResizable(false)
+        frame.addWindowListener(onCloseAction())
+    }
+
+    private static WindowListener onCloseAction() {
+        new WindowListener() {
+            @Override
+            void windowOpened(WindowEvent e) {
+            }
+
+            @Override
+            void windowClosing(WindowEvent e) {
+                MainForm.setVisible(true)
+            }
+
+            @Override
+            void windowClosed(WindowEvent e) {
+            }
+
+            @Override
+            void windowIconified(WindowEvent e) {
+            }
+
+            @Override
+            void windowDeiconified(WindowEvent e) {
+            }
+
+            @Override
+            void windowActivated(WindowEvent e) {
+            }
+
+            @Override
+            void windowDeactivated(WindowEvent e) {
+            }
+        }
     }
 
     private static ActionListener loadKeyButtonAction() {
@@ -143,9 +183,49 @@ class EncryptionForm {
         }
     }
 
+    static ActionListener chartsButtonAction() {
+        return new ActionListener() {
+            @Override
+            void actionPerformed(ActionEvent e) {
+                final String originalText = FormUtil.getTextAreaFromPanelWithTitle(originalTextPanel).getText()
+                final String encryptedText = HomophonicCipherEncrypter.encrypt(originalText, encryptionKey)
+
+                if (encryptedText.isBlank() || originalText.isBlank()) {
+                    return
+                }
+
+                Map<Character, Integer> analyzedAlphabet = HelperUtil.analyzeCharactersFrequency(originalText.toLowerCase())
+                Map<Character, Integer> analyzedAlphabetEncrypted = HelperUtil.analyzeCharactersFrequency(encryptedText)
+
+                new Thread(new Runnable() {
+                    @Override
+                    void run() {
+                        FormUtil.close(chartFrame)
+                        JFrame originalTextChart = BarChart.getChart(analyzedAlphabet, "Original Text")
+                        JFrame encryptedTextChart = BarChart.getChart(analyzedAlphabetEncrypted, "Encrypted Text")
+
+                        chartFrame = new JFrame()
+                        FormUtil.setBoxLayout(chartFrame.getContentPane() as JComponent, BoxLayout.Y_AXIS)
+
+                        chartFrame.add(originalTextChart.getContentPane().getComponent(0))
+                        chartFrame.add(encryptedTextChart.getContentPane().getComponent(0))
+                        chartFrame.setSize(1000, 800)
+                        chartFrame.setTitle("Character frequency chart comparison")
+                        chartFrame.setVisible(true)
+
+                        FormUtil.close(originalTextChart)
+                        FormUtil.close(encryptedTextChart)
+                    }
+                }).start()
+            }
+        }
+    }
+
     private static void loadKey(String text) throws JSONException {
         JSONObject json = new JSONObject(text)
         encryptionKey = new HashMap<>()
+
+        // Map json to correct map
         for (String key : json.keySet()) {
             JSONArray array = json.get(key) as JSONArray
             HashSet<Character> set = new HashSet<>()

@@ -23,6 +23,8 @@ class GenerateKeyForm {
 
     static void construct(int x, int y) {
         create()
+        y = y - frame.getHeight() / 2 as int
+        y = y < 0 ? 0 : y
         frame.setLocation(x, y)
         frame.setVisible(true)
     }
@@ -169,7 +171,7 @@ class GenerateKeyForm {
                     try {
                         fileText = fileChooser
                                 .getSelectedFile()
-                                .getText("UTF-8")
+                                .getText()
                     } catch (FileNotFoundException ignored) {
                         FormUtil.showMessage("Error", "File could not be opened!")
                     }
