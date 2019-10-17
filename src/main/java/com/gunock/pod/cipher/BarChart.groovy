@@ -11,7 +11,16 @@ import javax.swing.*
 class BarChart {
 
     static JFrame getChart(Map<Character, Integer> values, String title) {
-        final List<String> keys = HelperUtil.characterSetToStringList(values.keySet())
+        List<String> keys = HelperUtil.characterSetToStringList(values.keySet())
+        for (int i = 0; i < keys.size(); i++) {
+            if (keys.get(i) == '\n') {
+                keys.set(i, "\\n")
+            } else if (keys.get(i) == '\r') {
+                keys.set(i, "\\r")
+            } else if (keys.get(i) == ' ') {
+                keys.set(i, "\\s")
+            }
+        }
         return getChart(keys, values.values() as List, title)
     }
 

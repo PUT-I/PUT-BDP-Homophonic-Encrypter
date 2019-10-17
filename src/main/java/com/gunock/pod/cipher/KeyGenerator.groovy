@@ -1,9 +1,8 @@
 package com.gunock.pod.cipher
 
 import com.gunock.pod.utils.HelperUtil
-import org.json.JSONObject
 
-class HomophonicCipherGenerator {
+class KeyGenerator {
 
     final static String ENG_ALPHABET = "abcdefghijklmnopqrstuvwxyz,.!?&\"';()1234567890 \n"
     static Set<Character> cipherAlphabet
@@ -25,17 +24,16 @@ class HomophonicCipherGenerator {
         return randomCharNumber
     }
 
-
     private static generateCipherAlphabet() {
         Set<Character> alph1 = HelperUtil.generateAlphabet(33, 126)
         Set<Character> alph2 = HelperUtil.generateAlphabet(173, 254)
         cipherAlphabet = alph1 + alph2
     }
 
-    static Map<Character, Set<Character>> generateKey(String textExample) {
+    static EncryptionKey generateKey(String textExample) {
         StringBuilder alphabetBuilder = new StringBuilder(ENG_ALPHABET)
         for (Character c : textExample.toCharArray()) {
-            if (!alphabetBuilder.contains(c.toString())) {
+            if (!alphabetBuilder.contains(c.toString()) && c != '\r') {
                 alphabetBuilder.append(c)
             }
         }
@@ -44,12 +42,13 @@ class HomophonicCipherGenerator {
         return generateKey(textAlphabet, cipherAlphabet, textExample)
     }
 
-    static Map<Character, Set<Character>> generateKey(Set<Character> textAlphabet, Set<Character> cipherAlphabet, String textExample) {
+    static EncryptionKey generateKey(Set<Character> textAlphabet, Set<Character> cipherAlphabet, String textExample) {
+        textExample = textExample.replace('\r', '')
         cipherAlphabet = generateCipherAlphabet()
 
         // Analyzed character frequency to improve generated key
         final Map<Character, Integer> analyzedAlphabet = HelperUtil.analyzeCharactersFrequency(textExample)
-        Map<Character, Set<Character>> result = new HashMap<>()
+        Map<Character, Set<Character>> result = new TreeMap<>()
 
         // Iterate over given alphabet
         for (Character c : textAlphabet) {
@@ -82,11 +81,7 @@ class HomophonicCipherGenerator {
             result.get(c).sort()
         }
 
-        return result
-    }
-
-    static String keyToJson(Map<Character, Set<Character>> key) {
-        return new JSONObject(key).toString(0)
+        return new EncryptionKey(result)
     }
 
 }

@@ -9,7 +9,7 @@ import java.awt.event.ActionListener
 
 class MainForm {
 
-    private static JFrame frame
+    static JFrame frame
 
     static void construct() {
         create()

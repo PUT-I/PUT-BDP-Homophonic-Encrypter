@@ -1,8 +1,8 @@
 package com.gunock.pod.tests
 
 import com.gunock.pod.cipher.BarChart
-import com.gunock.pod.cipher.HomophonicCipherEncrypter
-import com.gunock.pod.cipher.HomophonicCipherGenerator
+import com.gunock.pod.cipher.Encrypter
+import com.gunock.pod.cipher.KeyGenerator
 import com.gunock.pod.forms.GenerateKeyForm
 import com.gunock.pod.forms.MainForm
 import com.gunock.pod.utils.HelperUtil
@@ -61,12 +61,12 @@ class CipherTest {
                 .toLowerCase()
                 .replace("\r", "")
 
-        def encryptionKey = HomophonicCipherGenerator.generateKey(textAlph, cipherAlph, fileText)
+        def encryptionKey = KeyGenerator.generateKey(textAlph, cipherAlph, fileText)
 
         println("Key:")
         println(encryptionKey)
 
-        final String encryptedText = HomophonicCipherEncrypter.encrypt(fileText, encryptionKey)
+        final String encryptedText = Encrypter.encrypt(fileText, encryptionKey)
 
         Map<Character, Integer> analyzedAlphabet = HelperUtil.analyzeCharactersFrequency(fileText)
         Map<Character, Integer> analyzedAlphabetEncrypted = HelperUtil.analyzeCharactersFrequency(encryptedText)
