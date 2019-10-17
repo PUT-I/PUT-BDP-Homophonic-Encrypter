@@ -32,6 +32,24 @@ class FormUtil {
         return textAreaPanel
     }
 
+    static JPanel createTextAreaWithTitle(String title, String text) {
+        JPanel textAreaPanel = new JPanel()
+        textAreaPanel.setBorder(new BevelBorder(BevelBorder.LOWERED))
+        setBoxLayout(textAreaPanel, BoxLayout.Y_AXIS)
+
+        JLabel textLabel = new JLabel(title)
+        textLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT)
+        textLabel.setAlignmentY(JLabel.CENTER_ALIGNMENT)
+
+        JTextArea textArea = new JTextArea()
+        textArea.setText(text)
+        textArea.setLineWrap(true)
+        textArea.setEditable(false)
+
+        addAllComponents(textAreaPanel, [textLabel, textArea])
+        return textAreaPanel
+    }
+
     static JTextArea getTextAreaFromPanelWithTitle(JPanel panel) {
         JScrollPane scrollPane = (JScrollPane) panel.getComponent(1)
         JViewport viewport = (JViewport) scrollPane.getComponent(0)

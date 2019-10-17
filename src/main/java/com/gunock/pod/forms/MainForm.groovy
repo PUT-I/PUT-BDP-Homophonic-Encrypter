@@ -20,11 +20,11 @@ class MainForm {
         frame.setVisible(true)
     }
 
-
     static void create() {
         JPanel buttonPanel = new JPanel()
         FormUtil.addButton(buttonPanel, "Generate key", generateKeyButtonAction())
         FormUtil.addButton(buttonPanel, "Encryption/Decryption", encryptionButtonAction())
+        FormUtil.addButton(buttonPanel, "Manual", manualButtonAction())
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT)
 
         frame = new JFrame("Main Menu")
@@ -32,14 +32,8 @@ class MainForm {
         frame.getContentPane().add(buttonPanel)
 
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS))
-        frame.setSize(350, 80)
+        frame.setSize(400, 80)
         frame.setResizable(false)
-    }
-
-    static void close() {
-        if (frame != null) {
-            FormUtil.close(frame)
-        }
     }
 
     static void setVisible(boolean visible) {
@@ -50,8 +44,8 @@ class MainForm {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent e) {
-                GenerateKeyForm.construct(frame.getX(), frame.getY())
                 setVisible(false)
+                GenerateKeyForm.construct(frame.getX(), frame.getY())
             }
         }
     }
@@ -60,8 +54,19 @@ class MainForm {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent e) {
-                EncryptionForm.construct(frame.getX(), frame.getY())
                 setVisible(false)
+                EncryptionForm.construct(frame.getX(), frame.getY())
+            }
+        }
+    }
+
+
+    static ActionListener manualButtonAction() {
+        return new ActionListener() {
+            @Override
+            void actionPerformed(ActionEvent e) {
+                setVisible(false)
+                ManualForm.construct()
             }
         }
     }
