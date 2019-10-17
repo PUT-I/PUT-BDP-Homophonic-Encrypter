@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.gunock.pod</groupId>
-    <artifactId>lab</artifactId>
+    <artifactId>pod-lab</artifactId>
     <version>1.0</version>
 
     <properties>
-        <java.version>12</java.version>
+        <java.version>11</java.version>
 
         <groovy.version>2.5.8</groovy.version>
 
@@ -54,13 +54,76 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-compiler</artifactId>
+                        <version>${groovy.compilier.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-batch</artifactId>
+                        <version>2.5.8-01</version>
+                    </dependency>
+                </dependencies>
             </plugin>
-
             <plugin>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-eclipse-compiler</artifactId>
                 <version>${groovy.compilier.version}</version>
+                <extensions>true</extensions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Main-Class>com.gunock.pod.MainClass</Main-Class>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>org.codehaus.groovy:groovy-all</artifact>
+                                    <excludes>
+                                        <exclude>groovy/grape/**</exclude>
+                                        <exclude>groovy/inspect/swingui/**</exclude>
+                                        <exclude>groovy/jmx/**</exclude>
+                                        <exclude>groovy/json/**</exclude>
+                                        <exclude>groovy/mock/**</exclude>
+                                        <exclude>groovy/security/**</exclude>
+                                        <exclude>groovy/servlet/**</exclude>
+                                        <exclude>groovy/sql/**</exclude>
+                                        <exclude>groovy/swing/**</exclude>
+                                        <exclude>groovy/text/**</exclude>
+                                        <exclude>groovy/time/**</exclude>
+                                        <exclude>groovy/ui/**</exclude>
+                                        <exclude>groovy/xml/**</exclude>
+                                        <exclude>groovyjarjarantlr/**</exclude>
+                                        <exclude>groovyjarjarcommonscli//**</exclude>
+                                        <exclude>org/codehaus/groovy/ant/**</exclude>
+                                        <exclude>org/codehaus/groovy/antlr/**</exclude>
+                                        <exclude>org/codehaus/groovy/groovydoc/**</exclude>
+                                        <exclude>org/codehaus/groovy/tools/groovydoc/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

@@ -27,7 +27,7 @@ Application allows to generate and save encryption, encrypt and decrypt data (en
 '''
 
         JPanel textPanel = new JPanel()
-        FormUtil.setBoxLayout(textPanel, BoxLayout.X_AXIS)
+        FormUtil.setBoxLayout(textPanel, BoxLayout.Y_AXIS)
         JPanel descriptionText = FormUtil.createTextAreaWithTitle("Description", DESCRIPTION_TEXT)
 
         textPanel.add(descriptionText)

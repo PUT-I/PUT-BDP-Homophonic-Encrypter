@@ -24,4 +24,8 @@ class EncryptionKey {
         return key.keySet()
     }
 
+    public boolean containsKey(Character c) {
+        return key.containsKey(c)
+    }
+
 }
