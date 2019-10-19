@@ -123,7 +123,11 @@ class EditKeyForm extends AbstractForm {
         JScrollPane scrollPane = new JScrollPane(keyPanel)
 
         GridBagConstraints labelConstraints = new GridBagConstraints()
+        labelConstraints.anchor = GridBagConstraints.WEST
+        labelConstraints.gridx = 0
         GridBagConstraints valuesConstraints = new GridBagConstraints()
+        valuesConstraints.anchor = GridBagConstraints.WEST
+        valuesConstraints.gridx = 40
 
         int yPos = 0
         for (Character keyEntry : encryptionKey.keySet()) {
@@ -142,13 +146,9 @@ class EditKeyForm extends AbstractForm {
             )
 
             labelConstraints.gridy = yPos
-            labelConstraints.gridx = 0
-            labelConstraints.anchor = GridBagConstraints.WEST
             keyPanel.add(keyLabel, labelConstraints)
 
             valuesConstraints.gridy = yPos
-            valuesConstraints.gridx = 40
-            valuesConstraints.anchor = GridBagConstraints.WEST
             keyValues.setPreferredSize(new Dimension(300, 20))
             keyValues.getDocument().addDocumentListener(new DocumentListener() {
                 @Override

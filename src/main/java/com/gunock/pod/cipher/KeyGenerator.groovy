@@ -4,6 +4,7 @@ import com.gunock.pod.utils.HelperUtil
 
 class KeyGenerator {
 
+    @SuppressWarnings("SpellCheckingInspection")
     final static String ENG_ALPHABET = "abcdefghijklmnopqrstuvwxyz,.!?&\"';()1234567890 \n"
     static Set<Character> cipherAlphabet
 
@@ -25,9 +26,9 @@ class KeyGenerator {
     }
 
     private static generateCipherAlphabet() {
-        Set<Character> alph1 = HelperUtil.generateAlphabet(33, 126)
-        Set<Character> alph2 = HelperUtil.generateAlphabet(173, 254)
-        cipherAlphabet = alph1 + alph2
+        Set<Character> alphabet1 = HelperUtil.generateAlphabet(33, 126)
+        Set<Character> alphabet2 = HelperUtil.generateAlphabet(173, 254)
+        cipherAlphabet = alphabet1 + alphabet2
     }
 
     static EncryptionKey generateKey(String textExample) {

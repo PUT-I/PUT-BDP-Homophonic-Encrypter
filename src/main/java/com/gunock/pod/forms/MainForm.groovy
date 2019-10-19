@@ -21,6 +21,7 @@ class MainForm extends AbstractForm {
     @Override
     void create() {
         JPanel buttonPanel = new JPanel()
+
         FormUtil.addButton(buttonPanel, "Generate key", generateKeyButtonAction())
         FormUtil.addButton(buttonPanel, "Encryption/Decryption", encryptionButtonAction())
         FormUtil.addButton(buttonPanel, "Manual", manualButtonAction())
@@ -35,38 +36,26 @@ class MainForm extends AbstractForm {
         frame.setResizable(false)
     }
 
-    ActionListener generateKeyButtonAction() {
-        MainForm currentForm = this
+    ActionListener newFormButtonAction(Closure newForm) {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent e) {
                 frame.setVisible(false)
-                new GenerateKeyForm(currentForm)
+                newForm()
             }
         }
+    }
+
+    ActionListener generateKeyButtonAction() {
+        return newFormButtonAction { new GenerateKeyForm(this) }
     }
 
     ActionListener encryptionButtonAction() {
-        AbstractForm currentForm = this
-        return new ActionListener() {
-            @Override
-            void actionPerformed(ActionEvent e) {
-                frame.setVisible(false)
-                new EncryptionForm(currentForm)
-            }
-        }
+        return newFormButtonAction { new EncryptionForm(this) }
     }
 
-
     ActionListener manualButtonAction() {
-        AbstractForm currentForm = this
-        return new ActionListener() {
-            @Override
-            void actionPerformed(ActionEvent e) {
-                frame.setVisible(false)
-                new ManualForm(currentForm)
-            }
-        }
+        return newFormButtonAction { new ManualForm(this) }
     }
 
 }

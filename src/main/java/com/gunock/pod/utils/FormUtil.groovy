@@ -16,7 +16,7 @@ class FormUtil {
         }
     }
 
-    static JPanel createTextAreaWithTitle(String title, boolean editable) {
+    static JPanel createTextAreaWithTitle(String title, String text, boolean editable) {
         JPanel textAreaPanel = new JPanel()
         textAreaPanel.setBorder(new BevelBorder(BevelBorder.LOWERED))
         setBoxLayout(textAreaPanel, BoxLayout.Y_AXIS)
@@ -27,6 +27,7 @@ class FormUtil {
 
         JTextArea textArea = new JTextArea()
         textArea.setLineWrap(true)
+        textArea.setText(text)
         textArea.setEditable(editable)
 
         JScrollPane scrollPane = new JScrollPane(textArea)
@@ -35,22 +36,12 @@ class FormUtil {
         return textAreaPanel
     }
 
+    static JPanel createTextAreaWithTitle(String title, boolean editable) {
+        return createTextAreaWithTitle(title, '', editable)
+    }
+
     static JPanel createTextAreaWithTitle(String title, String text) {
-        JPanel textAreaPanel = new JPanel()
-        textAreaPanel.setBorder(new BevelBorder(BevelBorder.LOWERED))
-        setBoxLayout(textAreaPanel, BoxLayout.Y_AXIS)
-
-        JLabel textLabel = new JLabel(title)
-        textLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT)
-        textLabel.setAlignmentY(JLabel.CENTER_ALIGNMENT)
-
-        JTextArea textArea = new JTextArea()
-        textArea.setText(text)
-        textArea.setLineWrap(true)
-        textArea.setEditable(false)
-
-        addAllComponents(textAreaPanel, [textLabel, textArea])
-        return textAreaPanel
+        return createTextAreaWithTitle(title, text, false)
     }
 
     static JTextArea getTextAreaFromPanelWithTitle(JPanel panel) {
@@ -146,6 +137,5 @@ class FormUtil {
             }
         }).start()
     }
-
 
 }
