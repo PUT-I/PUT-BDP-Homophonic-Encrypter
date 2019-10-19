@@ -9,26 +9,28 @@ import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 
-class GenerateKeyForm {
+class GenerateKeyForm extends AbstractForm {
 
-    private static JFrame frame
-    private static JFrame fileChooserFrame
-    private static JFileChooser fileChooser
-    private static JPanel fileTextAreaPanel
+    private JFrame fileChooserFrame
+    private JFileChooser fileChooser
+    private JPanel fileTextAreaPanel
 
     GenerateKeyForm() {
         create()
     }
 
-    static void construct(int x, int y) {
+    GenerateKeyForm(AbstractForm parentForm) {
+        this.parentForm = parentForm
         create()
-        y = y - frame.getHeight() / 2 as int
+        Point location = parentForm.getFrame().getLocation()
+        int y = location.getY() - frame.getHeight() / 2 as int
         y = y < 0 ? 0 : y
-        frame.setLocation(x, y)
+        frame.setLocation((int) location.getX(), y)
         frame.setVisible(true)
     }
 
-    static void create() {
+    @Override
+    void create() {
         JPanel buttonPanel = new JPanel()
         FormUtil.setBoxLayout(buttonPanel, BoxLayout.X_AXIS)
 
@@ -53,24 +55,14 @@ class GenerateKeyForm {
 
         frame = new JFrame("Generate key")
         FormUtil.addAllComponents(frame.getContentPane() as JComponent, [buttonPanel, fileTextAreaPanel])
-        frame.addWindowListener(FormUtil.onWindowCloseAction(MainForm.getFrame()))
+        frame.addWindowListener(FormUtil.onWindowCloseAction(parentForm.getFrame()))
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS))
         frame.setSize(new Dimension(480, 800))
         frame.setMinimumSize(new Dimension(480, 800))
         frame.setResizable(false)
     }
 
-    static void close() {
-        if (frame != null) {
-            FormUtil.close(frame)
-        }
-    }
-
-    static void setVisible(boolean visible) {
-        frame.setVisible(visible)
-    }
-
-    private static ActionListener loadFileButtonAction() {
+    private ActionListener loadFileButtonAction() {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent event) {
@@ -83,19 +75,20 @@ class GenerateKeyForm {
         }
     }
 
-    private static ActionListener generateKeyButtonAction() {
+    private ActionListener generateKeyButtonAction() {
+        GenerateKeyForm currentForm = this
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent event) {
                 String fileText = FormUtil.getTextAreaFromPanelWithTitle(fileTextAreaPanel).getText()
                 EncryptionKey key = KeyGenerator.generateKey(fileText)
-                EditKeyForm.construct(frame.getX(), frame.getY(), key, fileText)
                 frame.setVisible(false)
+                new EditKeyForm(currentForm, key, fileText)
             }
         }
     }
 
-    private static ActionListener fileChooserAction() {
+    private ActionListener fileChooserAction() {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent event) {

@@ -8,11 +8,12 @@ import java.awt.*
 import java.awt.event.WindowEvent
 import java.awt.event.WindowListener
 
-class ManualForm {
+class ManualForm extends AbstractForm {
 
-    static JFrame frame
+    JFrame frame
 
-    static void construct() {
+    ManualForm(AbstractForm parentForm) {
+        this.parentForm = parentForm
         create()
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize()
         final int x = (int) (screenSize.getWidth() / 2 - frame.getWidth() / 2)
@@ -21,10 +22,10 @@ class ManualForm {
         frame.setVisible(true)
     }
 
-    static void create() {
-        final String DESCRIPTION_TEXT = '''This application is used to encrypt data with homophonic cipher.
-Application allows to generate and save encryption, encrypt and decrypt data (entered manually or loaded from file).
-'''
+    void create() {
+        final String DESCRIPTION_TEXT = 'This application is used to encrypt data with homophonic cipher.' +
+                '\nApplication allows to generate and save encryption, encrypt and decrypt data' +
+                ' (entered manually or loaded from file).'
 
         JPanel textPanel = new JPanel()
         FormUtil.setBoxLayout(textPanel, BoxLayout.Y_AXIS)
@@ -45,7 +46,7 @@ Application allows to generate and save encryption, encrypt and decrypt data (en
         frame.addWindowListener(onCloseAction())
     }
 
-    private static WindowListener onCloseAction() {
+    private WindowListener onCloseAction() {
         new WindowListener() {
             @Override
             void windowOpened(WindowEvent e) {
@@ -53,7 +54,7 @@ Application allows to generate and save encryption, encrypt and decrypt data (en
 
             @Override
             void windowClosing(WindowEvent e) {
-                MainForm.setVisible(true)
+                parentForm.getFrame().setVisible(true)
             }
 
             @Override

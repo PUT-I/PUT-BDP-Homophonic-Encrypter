@@ -1,6 +1,5 @@
 package com.gunock.pod.forms
 
-import com.gunock.pod.cipher.BarChart
 import com.gunock.pod.cipher.Encrypter
 import com.gunock.pod.cipher.EncryptionKey
 import com.gunock.pod.utils.FormUtil
@@ -16,26 +15,28 @@ import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 
-class EncryptionForm {
+class EncryptionForm extends AbstractForm {
 
-    static JFrame frame
-    static JFrame fileChooserFrame
-    private static JFrame chartFrame
-    static JLabel keyStatusLabel
-    static JPanel unencryptedTextPanel
-    static JPanel encryptedTextPanel
+    JFrame fileChooserFrame
+    private JFrame chartFrame
+    JLabel keyStatusLabel
+    JPanel unencryptedTextPanel
+    JPanel encryptedTextPanel
+    JTextField filenameField
 
-    private static EncryptionKey encryptionKey
+    private EncryptionKey encryptionKey
 
-    static void construct(int x, int y) {
+    EncryptionForm(AbstractForm parentForm) {
+        this.parentForm = parentForm
         create()
-        y = y - frame.getHeight() / 2 as int
+        final Point parentLocation = parentForm.getFrame().getLocation()
+        int y = parentLocation.getY() - frame.getHeight() / 2 as int
         y = y < 0 ? 0 : y
-        frame.setLocation(x, y)
+        frame.setLocation(parentLocation.getX() as int, y)
         frame.setVisible(true)
     }
 
-    static void create() {
+    void create() {
         JPanel upperButtonPanel = new JPanel()
         FormUtil.setBoxLayout(upperButtonPanel, BoxLayout.X_AXIS)
         FormUtil.addButton(upperButtonPanel, "Load Encryption Key", loadFileButtonAction(keyFileChooserAction()))
@@ -47,7 +48,12 @@ class EncryptionForm {
         FormUtil.addButton(lowerButtonPanel, "Load Unencrypted File", loadFileButtonAction(loadFileChooserAction(false)))
         FormUtil.addButton(lowerButtonPanel, "Load Encrypted File", loadFileButtonAction(loadFileChooserAction(true)))
         FormUtil.addButton(lowerButtonPanel, "Show Frequency Charts", chartsButtonAction())
+        FormUtil.addButton(lowerButtonPanel, "Save Encrypted File", saveEncryptedFileButtonAction())
 
+        filenameField = new JTextField()
+        filenameField.setPreferredSize(new Dimension(200, filenameField.getPreferredSize().getHeight() as int))
+        filenameField.setMaximumSize(filenameField.getPreferredSize())
+        lowerButtonPanel.add(filenameField)
 
         keyStatusLabel = new JLabel("    Not loaded    ")
         keyStatusLabel.setBorder(new TitledBorder(new LineBorder(Color.GRAY, 5), "Key Status"))
@@ -75,10 +81,23 @@ class EncryptionForm {
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS))
         frame.setSize(1000, 800)
         frame.setResizable(false)
-        frame.addWindowListener(FormUtil.onWindowCloseAction(MainForm.getFrame()))
+        frame.addWindowListener(FormUtil.onWindowCloseAction(parentForm.getFrame()))
     }
 
-    private static ActionListener loadFileButtonAction(ActionListener fileChooserAction) {
+    ActionListener saveEncryptedFileButtonAction() {
+        return new ActionListener() {
+            @Override
+            void actionPerformed(ActionEvent actionEvent) {
+                final String text = FormUtil.getTextAreaFromPanelWithTitle(encryptedTextPanel).getText()
+                if (text.isBlank()) {
+                    return
+                }
+                HelperUtil.writeFile(filenameField.getText(), text)
+            }
+        }
+    }
+
+    private ActionListener loadFileButtonAction(ActionListener fileChooserAction) {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent event) {
@@ -97,7 +116,7 @@ class EncryptionForm {
         }
     }
 
-    private static ActionListener keyFileChooserAction() {
+    private ActionListener keyFileChooserAction() {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent event) {
@@ -120,7 +139,7 @@ class EncryptionForm {
         }
     }
 
-    private static ActionListener loadFileChooserAction(boolean encrypted) {
+    private ActionListener loadFileChooserAction(boolean encrypted) {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent event) {
@@ -149,7 +168,7 @@ class EncryptionForm {
         }
     }
 
-    private static ActionListener encryptTextButtonAction() {
+    private ActionListener encryptTextButtonAction() {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent e) {
@@ -171,7 +190,7 @@ class EncryptionForm {
         }
     }
 
-    private static ActionListener decryptTextButtonAction() {
+    private ActionListener decryptTextButtonAction() {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent e) {
@@ -189,45 +208,23 @@ class EncryptionForm {
         }
     }
 
-    private static ActionListener chartsButtonAction() {
+    private ActionListener chartsButtonAction() {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent e) {
-                final String originalText = FormUtil.getTextAreaFromPanelWithTitle(unencryptedTextPanel).getText()
-                final String encryptedText = Encrypter.encrypt(originalText, encryptionKey)
+                final String publicText = FormUtil.getTextAreaFromPanelWithTitle(unencryptedTextPanel).getText()
+                final String encryptedText = Encrypter.encrypt(publicText, encryptionKey)
 
-                if (encryptedText.isBlank() || originalText.isBlank()) {
+                if (encryptedText.isBlank() || publicText.isBlank()) {
                     return
                 }
 
-                Map<Character, Integer> analyzedAlphabet = HelperUtil.analyzeCharactersFrequency(originalText.toLowerCase())
-                Map<Character, Integer> analyzedAlphabetEncrypted = HelperUtil.analyzeCharactersFrequency(encryptedText)
-
-                new Thread(new Runnable() {
-                    @Override
-                    void run() {
-                        FormUtil.close(chartFrame)
-                        JFrame originalTextChart = BarChart.getChart(analyzedAlphabet, "Original Text")
-                        JFrame encryptedTextChart = BarChart.getChart(analyzedAlphabetEncrypted, "Encrypted Text")
-
-                        chartFrame = new JFrame()
-                        FormUtil.setBoxLayout(chartFrame.getContentPane() as JComponent, BoxLayout.Y_AXIS)
-
-                        chartFrame.add(originalTextChart.getContentPane().getComponent(0))
-                        chartFrame.add(encryptedTextChart.getContentPane().getComponent(0))
-                        chartFrame.setSize(1000, 800)
-                        chartFrame.setTitle("Character frequency chart comparison")
-                        chartFrame.setVisible(true)
-
-                        FormUtil.close(originalTextChart)
-                        FormUtil.close(encryptedTextChart)
-                    }
-                }).start()
+                FormUtil.createCharFrequencyChart(chartFrame, publicText.toLowerCase(), encryptedText)
             }
         }
     }
 
-    private static void loadKey(String text) throws JSONException {
+    private void loadKey(String text) throws JSONException {
         JSONObject json = new JSONObject(text)
         encryptionKey = new EncryptionKey()
 

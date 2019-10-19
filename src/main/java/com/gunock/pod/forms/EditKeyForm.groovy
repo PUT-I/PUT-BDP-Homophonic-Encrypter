@@ -1,8 +1,8 @@
 package com.gunock.pod.forms
 
-import com.gunock.pod.cipher.BarChart
 import com.gunock.pod.cipher.Encrypter
 import com.gunock.pod.cipher.EncryptionKey
+import com.gunock.pod.forms.DocumentFilters.KeyFilter
 import com.gunock.pod.utils.FormUtil
 import com.gunock.pod.utils.HelperUtil
 import org.json.JSONObject
@@ -11,31 +11,29 @@ import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.text.AbstractDocument
-import javax.swing.text.AttributeSet
-import javax.swing.text.BadLocationException
-import javax.swing.text.DocumentFilter
 import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.event.WindowEvent
 import java.awt.event.WindowListener
 
-class EditKeyForm {
+class EditKeyForm extends AbstractForm {
 
-    private static JFrame frame
-    private static JFrame chartFrame
-    private static EncryptionKey encryptionKey
-    private static String exampleText
+    private JFrame chartFrame
+    private String exampleText
+    private KeyFilter keyFilter
 
-    static void construct(int x, int y, EncryptionKey key, String text) {
-        encryptionKey = key
+    EditKeyForm(AbstractForm parentForm, EncryptionKey encryptionKey, String text) {
+        this.parentForm = parentForm
+        keyFilter = new KeyFilter(encryptionKey)
         exampleText = text
         create()
-        frame.setLocation(x, y)
+        frame.setLocation(parentForm.getFrame().getLocation())
         frame.setVisible(true)
     }
 
-    static void create() {
+    @Override
+    void create() {
         JTextField filenameField = new JTextField("key.json")
 
         JPanel saveButtonPanel = new JPanel()
@@ -55,53 +53,24 @@ class EditKeyForm {
         frame.getContentPane().add(buttonPanel)
         frame.addWindowListener(onCloseAction())
 
-        mapToFrameElements(encryptionKey)
+        mapToFrameElements(keyFilter.getEncryptionKey())
 
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS))
         frame.setSize(400, 800)
         frame.setResizable(false)
     }
 
-    static ActionListener chartsButtonAction() {
+    ActionListener chartsButtonAction() {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent e) {
-                final String encryptedText = Encrypter.encrypt(exampleText, encryptionKey)
-
-                Map<Character, Integer> analyzedAlphabet = HelperUtil.analyzeCharactersFrequency(exampleText.toLowerCase())
-                Map<Character, Integer> analyzedAlphabetEncrypted = HelperUtil.analyzeCharactersFrequency(encryptedText)
-
-                new Thread(new Runnable() {
-                    @Override
-                    void run() {
-                        FormUtil.close(chartFrame)
-                        JFrame originalTextChart = BarChart.getChart(analyzedAlphabet, "Original Text")
-                        JFrame encryptedTextChart = BarChart.getChart(analyzedAlphabetEncrypted, "Encrypted Text")
-
-                        chartFrame = new JFrame()
-                        FormUtil.setBoxLayout(chartFrame.getContentPane() as JComponent, BoxLayout.Y_AXIS)
-
-                        chartFrame.add(originalTextChart.getContentPane().getComponent(0))
-                        chartFrame.add(encryptedTextChart.getContentPane().getComponent(0))
-                        chartFrame.setSize(1000, 800)
-                        chartFrame.setTitle("Character frequency chart comparison")
-                        chartFrame.setVisible(true)
-
-                        FormUtil.close(originalTextChart)
-                        FormUtil.close(encryptedTextChart)
-                    }
-                }).start()
+                final String encryptedText = Encrypter.encrypt(exampleText, keyFilter.getEncryptionKey())
+                FormUtil.createCharFrequencyChart(chartFrame, exampleText.toLowerCase(), encryptedText)
             }
         }
     }
 
-    static void close() {
-        if (frame != null) {
-            FormUtil.close(frame)
-        }
-    }
-
-    private static WindowListener onCloseAction() {
+    private WindowListener onCloseAction() {
         new WindowListener() {
             @Override
             void windowOpened(WindowEvent e) {
@@ -110,7 +79,7 @@ class EditKeyForm {
             @Override
             void windowClosing(WindowEvent e) {
                 FormUtil.close(chartFrame)
-                GenerateKeyForm.setVisible(true)
+                parentForm.close()
             }
 
             @Override
@@ -135,29 +104,28 @@ class EditKeyForm {
         }
     }
 
-    static ActionListener saveButtonAction(JTextField filenameField) {
+    ActionListener saveButtonAction(JTextField filenameField) {
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent e) {
-                JSONObject json = new JSONObject(encryptionKey)
+                JSONObject json = new JSONObject(keyFilter.getEncryptionKey().getKey())
                 HelperUtil.writeFile(filenameField.getText(), json.toString())
                 close()
-                GenerateKeyForm.close()
-                MainForm.setVisible(true)
+                parentForm.close()
             }
         }
     }
 
-    static void mapToFrameElements(EncryptionKey encryptionKey) {
+    void mapToFrameElements(EncryptionKey encryptionKey) {
         JPanel keyPanel = new JPanel()
         keyPanel.setLayout(new GridBagLayout())
+        keyPanel.setMaximumSize(new Dimension(10, 100))
+        JScrollPane scrollPane = new JScrollPane(keyPanel)
+
         GridBagConstraints labelConstraints = new GridBagConstraints()
         GridBagConstraints valuesConstraints = new GridBagConstraints()
 
         int yPos = 0
-
-        keyPanel.setMaximumSize(new Dimension(10, 100))
-        JScrollPane scrollPane = new JScrollPane(keyPanel)
         for (Character keyEntry : encryptionKey.keySet()) {
             String keyText = keyEntry.toString()
             if (keyText == ' ') {
@@ -206,70 +174,12 @@ class EditKeyForm {
                 }
             })
             keyValues.getDocument().putProperty("label", keyLabel)
-            ((AbstractDocument) keyValues.getDocument()).setDocumentFilter(new KeyFilter())
-            keyPanel.add(keyValues, valuesConstraints)
+            ((AbstractDocument) keyValues.getDocument()).setDocumentFilter(keyFilter)
 
+            keyPanel.add(keyValues, valuesConstraints)
             yPos++
         }
         frame.getContentPane().add(scrollPane)
     }
 
-    private static void updateKey(String key, String values) {
-        Character charKey = key.charAt(0)
-        if (key.length() > 1) {
-            if (key == "\\n") {
-                charKey = '\n'
-            } else if (key == "\\s") {
-                charKey = ' '
-            }
-        }
-
-        ArrayList<String> valuesTable = Arrays.asList(values.split(", "))
-
-        encryptionKey.get(charKey).clear()
-        if (valuesTable.size() == 0) {
-            println("values empty")
-            return
-        } else if (valuesTable.size() == 1 && valuesTable.get(0) == '') {
-            return
-        }
-        for (String value : valuesTable) {
-            encryptionKey.get(charKey).add(value.charAt(0))
-        }
-    }
-
-    private static class KeyFilter extends DocumentFilter {
-        @Override
-        void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-            Map<Character, Character> reversedKey = Encrypter.reverseKey(encryptionKey)
-            String documentText = fb.getDocument().getText(0, fb.getDocument().getLength())
-            if (reversedKey.containsKey(text.charAt(0)) || documentText.contains(text) || text == ' ') {
-                return
-            } else if (documentText.length() > 0) {
-                super.insertString(fb, offset, ', ' + text, attrs)
-            } else {
-                super.replace(fb, offset, length, text, attrs)
-            }
-
-            String labelText = ((JLabel) fb.getDocument().getProperty("label")).getText()
-
-            updateKey(labelText, fb.getDocument().getText(0, fb.getDocument().getLength()))
-        }
-
-        @Override
-        void insertString(FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
-        }
-
-        @Override
-        void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
-            if (fb.getDocument().getLength() > 1) {
-                super.remove(fb, offset - 2, length + 2)
-            } else {
-                super.remove(fb, offset, length)
-            }
-
-            String labelText = ((JLabel) fb.getDocument().getProperty("label")).getText()
-            updateKey(labelText, fb.getDocument().getText(0, fb.getDocument().getLength()))
-        }
-    }
 }

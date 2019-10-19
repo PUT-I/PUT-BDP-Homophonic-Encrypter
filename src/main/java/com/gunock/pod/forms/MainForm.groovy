@@ -7,11 +7,9 @@ import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 
-class MainForm {
+class MainForm extends AbstractForm {
 
-    static JFrame frame
-
-    static void construct() {
+    MainForm() {
         create()
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize()
         final int x = (int) (screenSize.getWidth() / 2 - frame.getWidth() / 2)
@@ -20,7 +18,8 @@ class MainForm {
         frame.setVisible(true)
     }
 
-    static void create() {
+    @Override
+    void create() {
         JPanel buttonPanel = new JPanel()
         FormUtil.addButton(buttonPanel, "Generate key", generateKeyButtonAction())
         FormUtil.addButton(buttonPanel, "Encryption/Decryption", encryptionButtonAction())
@@ -36,37 +35,36 @@ class MainForm {
         frame.setResizable(false)
     }
 
-    static void setVisible(boolean visible) {
-        frame.setVisible(visible)
-    }
-
-    static ActionListener generateKeyButtonAction() {
+    ActionListener generateKeyButtonAction() {
+        MainForm currentForm = this
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent e) {
-                setVisible(false)
-                GenerateKeyForm.construct(frame.getX(), frame.getY())
+                frame.setVisible(false)
+                new GenerateKeyForm(currentForm)
             }
         }
     }
 
-    static ActionListener encryptionButtonAction() {
+    ActionListener encryptionButtonAction() {
+        AbstractForm currentForm = this
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent e) {
-                setVisible(false)
-                EncryptionForm.construct(frame.getX(), frame.getY())
+                frame.setVisible(false)
+                new EncryptionForm(currentForm)
             }
         }
     }
 
 
-    static ActionListener manualButtonAction() {
+    ActionListener manualButtonAction() {
+        AbstractForm currentForm = this
         return new ActionListener() {
             @Override
             void actionPerformed(ActionEvent e) {
-                setVisible(false)
-                ManualForm.construct()
+                frame.setVisible(false)
+                new ManualForm(currentForm)
             }
         }
     }

@@ -24,8 +24,11 @@ class EncryptionKey {
         return key.keySet()
     }
 
-    public boolean containsKey(Character c) {
+    boolean containsKey(Character c) {
         return key.containsKey(c)
     }
 
+    Map<Character, Set<Character>> getKey() {
+        return key
+    }
 }

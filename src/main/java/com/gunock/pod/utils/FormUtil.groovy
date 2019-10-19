@@ -1,5 +1,7 @@
 package com.gunock.pod.utils
 
+import com.gunock.pod.cipher.BarChart
+
 import javax.swing.*
 import javax.swing.border.BevelBorder
 import java.awt.event.ActionListener
@@ -118,5 +120,32 @@ class FormUtil {
             }
         }
     }
+
+    static void createCharFrequencyChart(JFrame chartFrame, String publicText, String encryptedText) {
+        Map<Character, Integer> analyzedAlphabet = HelperUtil.analyzeCharactersFrequency(publicText.toLowerCase())
+        Map<Character, Integer> analyzedAlphabetEncrypted = HelperUtil.analyzeCharactersFrequency(encryptedText)
+
+        new Thread(new Runnable() {
+            @Override
+            void run() {
+                close(chartFrame)
+                JFrame originalTextChart = BarChart.getChart(analyzedAlphabet, "Original Text")
+                JFrame encryptedTextChart = BarChart.getChart(analyzedAlphabetEncrypted, "Encrypted Text")
+
+                chartFrame = new JFrame()
+                setBoxLayout(chartFrame.getContentPane() as JComponent, BoxLayout.Y_AXIS)
+
+                chartFrame.add(originalTextChart.getContentPane().getComponent(0))
+                chartFrame.add(encryptedTextChart.getContentPane().getComponent(0))
+                chartFrame.setSize(1000, 800)
+                chartFrame.setTitle("Character frequency chart comparison")
+                chartFrame.setVisible(true)
+
+                close(originalTextChart)
+                close(encryptedTextChart)
+            }
+        }).start()
+    }
+
 
 }

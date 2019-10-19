@@ -10,13 +10,13 @@ class Encrypter {
 
         // Iterate over source string
         for (Character c : source.toCharArray()) {
-            if (!encryptionKey.key.containsKey(c)) {
+            if (!encryptionKey.containsKey(c)) {
                 throw new NullPointerException("key not found")
             }
 
             final int keyCharCount = encryptionKey.get(c).size()
             // Get random character from chars stored under key (character from source string)
-            final Character randomChar = encryptionKey.key.get(c)[HelperUtil.randomInt(0, keyCharCount - 1)]
+            final Character randomChar = encryptionKey.get(c)[HelperUtil.randomInt(0, keyCharCount - 1)]
             // Append selected character to result string
             result += randomChar
             // Print comparison of original and substituted characters
@@ -28,7 +28,7 @@ class Encrypter {
     static Map<Character, Character> reverseKey(EncryptionKey encryptionKey) {
         Map<Character, Character> result = new HashMap<>()
 
-        for (Character key : encryptionKey.key.keySet()) {
+        for (Character key : encryptionKey.keySet()) {
             for (Character c : encryptionKey.get(key)) {
                 result.put(c, key)
             }
