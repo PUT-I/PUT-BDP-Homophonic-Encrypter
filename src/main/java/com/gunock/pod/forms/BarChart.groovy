@@ -1,4 +1,4 @@
-package com.gunock.pod.cipher
+package com.gunock.pod.forms
 
 import com.gunock.pod.utils.HelperUtil
 import org.knowm.xchart.CategoryChart
@@ -33,7 +33,6 @@ class BarChart {
     }
 
     static CategoryChart createChart(List<String> keys, List<Integer> values, String title) {
-        // Create Chart
         CategoryChart chart = new CategoryChartBuilder()
                 .width(800)
                 .height(600)
@@ -42,11 +41,9 @@ class BarChart {
                 .yAxisTitle("Frequency")
                 .build()
 
-        // Customize Chart
         chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNE)
         chart.getStyler().setHasAnnotations(true)
 
-        // Series
         chart.addSeries(title, keys, values)
 
         return chart

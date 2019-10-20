@@ -1,11 +1,9 @@
 package com.gunock.pod.forms
 
-
 import com.gunock.pod.utils.FormUtil
 
 import javax.swing.*
 import java.awt.*
-import java.awt.event.WindowEvent
 import java.awt.event.WindowListener
 
 class ManualForm extends AbstractForm {
@@ -22,7 +20,7 @@ class ManualForm extends AbstractForm {
         frame.setVisible(true)
     }
 
-    void create() {
+    JPanel createTextPanel() {
         final String DESCRIPTION_TEXT = 'This application is used to encrypt data with homophonic cipher.' +
                 '\nApplication allows to generate and save encryption, encrypt and decrypt data' +
                 ' (entered manually or loaded from file).'
@@ -32,50 +30,23 @@ class ManualForm extends AbstractForm {
         JPanel descriptionText = FormUtil.createTextAreaWithTitle("Description", DESCRIPTION_TEXT)
 
         textPanel.add(descriptionText)
+        return textPanel
+    }
+
+    void create() {
+        JPanel textPanel = createTextPanel()
 
         frame = new JFrame("Manual")
-
         FormUtil.setBoxLayout(frame.getContentPane() as JComponent, BoxLayout.Y_AXIS)
-
         frame.getContentPane().add(new JScrollPane(textPanel))
-
         FormUtil.addAllComponents(frame.getContentPane() as JComponent, [textPanel])
-
         frame.setSize(480, 800)
-        frame.setResizable(false)
         frame.addWindowListener(onCloseAction())
     }
 
     private WindowListener onCloseAction() {
-        new WindowListener() {
-            @Override
-            void windowOpened(WindowEvent e) {
-            }
-
-            @Override
-            void windowClosing(WindowEvent e) {
-                parentForm.getFrame().setVisible(true)
-            }
-
-            @Override
-            void windowClosed(WindowEvent e) {
-            }
-
-            @Override
-            void windowIconified(WindowEvent e) {
-            }
-
-            @Override
-            void windowDeiconified(WindowEvent e) {
-            }
-
-            @Override
-            void windowActivated(WindowEvent e) {
-            }
-
-            @Override
-            void windowDeactivated(WindowEvent e) {
-            }
+        return FormUtil.onWindowClosingAction {
+            parentForm.getFrame().setVisible(true)
         }
     }
 }

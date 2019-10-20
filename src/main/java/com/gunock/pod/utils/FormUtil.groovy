@@ -1,9 +1,10 @@
 package com.gunock.pod.utils
 
-import com.gunock.pod.cipher.BarChart
+import com.gunock.pod.forms.BarChart
 
 import javax.swing.*
 import javax.swing.border.BevelBorder
+import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.event.WindowEvent
 import java.awt.event.WindowListener
@@ -79,7 +80,16 @@ class FormUtil {
         }
     }
 
-    static WindowListener onWindowCloseAction(JFrame previousFrame) {
+    static ActionListener createActionListener(Closure action) {
+        return new ActionListener() {
+            @Override
+            void actionPerformed(ActionEvent event) {
+                action(event)
+            }
+        }
+    }
+
+    static WindowListener createWindowListener(Closure closingAction) {
         return new WindowListener() {
             @Override
             void windowOpened(WindowEvent e) {
@@ -87,7 +97,7 @@ class FormUtil {
 
             @Override
             void windowClosing(WindowEvent e) {
-                previousFrame.setVisible(true)
+                closingAction()
             }
 
             @Override
@@ -110,6 +120,10 @@ class FormUtil {
             void windowDeactivated(WindowEvent e) {
             }
         }
+    }
+
+    static WindowListener onWindowClosingAction(Closure closingAction) {
+        return createWindowListener(closingAction)
     }
 
     static void createCharFrequencyChart(JFrame chartFrame, String publicText, String encryptedText) {

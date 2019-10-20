@@ -12,9 +12,7 @@ import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.text.AbstractDocument
 import java.awt.*
-import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
-import java.awt.event.WindowEvent
 import java.awt.event.WindowListener
 
 class EditKeyForm extends AbstractForm {
@@ -32,14 +30,17 @@ class EditKeyForm extends AbstractForm {
         frame.setVisible(true)
     }
 
-    @Override
-    void create() {
-        JTextField filenameField = new JTextField("key.json")
-
+    JPanel createSaveButtonPanel() {
         JPanel saveButtonPanel = new JPanel()
         FormUtil.setBoxLayout(saveButtonPanel, BoxLayout.X_AXIS)
+        JTextField filenameField = new JTextField("key.json")
         FormUtil.addButton(saveButtonPanel, "Save Key", saveButtonAction(filenameField))
         saveButtonPanel.add(filenameField)
+        return saveButtonPanel
+    }
+
+    JPanel createButtonPanel() {
+        JPanel saveButtonPanel = createSaveButtonPanel()
 
         JPanel chartsButtonPanel = new JPanel()
         chartsButtonPanel.setLayout(new FlowLayout())
@@ -48,71 +49,43 @@ class EditKeyForm extends AbstractForm {
         JPanel buttonPanel = new JPanel()
         FormUtil.setBoxLayout(buttonPanel, BoxLayout.Y_AXIS)
         FormUtil.addAllComponents(buttonPanel, [saveButtonPanel, chartsButtonPanel])
+        return buttonPanel
+    }
+
+    @Override
+    void create() {
+        JPanel buttonPanel = createButtonPanel()
 
         frame = new JFrame("Edit key")
         frame.getContentPane().add(buttonPanel)
-        frame.addWindowListener(onCloseAction())
-
         mapToFrameElements(keyFilter.getEncryptionKey())
 
+        frame.addWindowListener(onCloseAction())
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS))
         frame.setSize(400, 800)
         frame.setResizable(false)
     }
 
     ActionListener chartsButtonAction() {
-        return new ActionListener() {
-            @Override
-            void actionPerformed(ActionEvent e) {
-                final String encryptedText = Encrypter.encrypt(exampleText, keyFilter.getEncryptionKey())
-                FormUtil.createCharFrequencyChart(chartFrame, exampleText.toLowerCase(), encryptedText)
-            }
+        return FormUtil.createActionListener {
+            final String encryptedText = Encrypter.encrypt(exampleText, keyFilter.getEncryptionKey())
+            FormUtil.createCharFrequencyChart(chartFrame, exampleText.toLowerCase(), encryptedText)
         }
     }
 
     private WindowListener onCloseAction() {
-        new WindowListener() {
-            @Override
-            void windowOpened(WindowEvent e) {
-            }
-
-            @Override
-            void windowClosing(WindowEvent e) {
-                FormUtil.close(chartFrame)
-                parentForm.close()
-            }
-
-            @Override
-            void windowClosed(WindowEvent e) {
-            }
-
-            @Override
-            void windowIconified(WindowEvent e) {
-            }
-
-            @Override
-            void windowDeiconified(WindowEvent e) {
-            }
-
-            @Override
-            void windowActivated(WindowEvent e) {
-            }
-
-            @Override
-            void windowDeactivated(WindowEvent e) {
-            }
+        new FormUtil().onWindowClosingAction {
+            FormUtil.close(chartFrame)
+            parentForm.close()
         }
     }
 
     ActionListener saveButtonAction(JTextField filenameField) {
-        return new ActionListener() {
-            @Override
-            void actionPerformed(ActionEvent e) {
-                JSONObject json = new JSONObject(keyFilter.getEncryptionKey().getKey())
-                HelperUtil.writeFile(filenameField.getText(), json.toString())
-                close()
-                parentForm.close()
-            }
+        return FormUtil.createActionListener {
+            JSONObject json = new JSONObject(keyFilter.getEncryptionKey().getKey())
+            HelperUtil.writeFile(filenameField.getText(), json.toString())
+            close()
+            parentForm.close()
         }
     }
 

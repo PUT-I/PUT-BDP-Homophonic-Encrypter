@@ -4,7 +4,6 @@ import com.gunock.pod.utils.FormUtil
 
 import javax.swing.*
 import java.awt.*
-import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 
 class MainForm extends AbstractForm {
@@ -18,31 +17,32 @@ class MainForm extends AbstractForm {
         frame.setVisible(true)
     }
 
-    @Override
-    void create() {
+    JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel()
 
         FormUtil.addButton(buttonPanel, "Generate key", generateKeyButtonAction())
         FormUtil.addButton(buttonPanel, "Encryption/Decryption", encryptionButtonAction())
         FormUtil.addButton(buttonPanel, "Manual", manualButtonAction())
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT)
+        return buttonPanel
+    }
+
+    @Override
+    void create() {
+        JPanel buttonPanel = createButtonPanel()
 
         frame = new JFrame("Main Menu")
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
         frame.getContentPane().add(buttonPanel)
-
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS))
         frame.setSize(400, 80)
         frame.setResizable(false)
     }
 
     ActionListener newFormButtonAction(Closure newForm) {
-        return new ActionListener() {
-            @Override
-            void actionPerformed(ActionEvent e) {
-                frame.setVisible(false)
-                newForm()
-            }
+        return FormUtil.createActionListener {
+            frame.setVisible(false)
+            newForm()
         }
     }
 

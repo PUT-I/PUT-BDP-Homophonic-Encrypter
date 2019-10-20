@@ -15,10 +15,6 @@ class GenerateKeyForm extends AbstractForm {
     private JFileChooser fileChooser
     private JPanel fileTextAreaPanel
 
-    GenerateKeyForm() {
-        create()
-    }
-
     GenerateKeyForm(AbstractForm parentForm) {
         this.parentForm = parentForm
         create()
@@ -29,8 +25,7 @@ class GenerateKeyForm extends AbstractForm {
         frame.setVisible(true)
     }
 
-    @Override
-    void create() {
+    JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel()
         FormUtil.setBoxLayout(buttonPanel, BoxLayout.X_AXIS)
 
@@ -43,19 +38,24 @@ class GenerateKeyForm extends AbstractForm {
 
         buttonPanel.add(generateKeyButton)
         buttonPanel.add(loadFileButton)
+        return buttonPanel
+    }
+
+    @Override
+    void create() {
+        JPanel buttonPanel = createButtonPanel()
 
         fileTextAreaPanel = FormUtil.createTextAreaWithTitle("Example text", true)
 
         fileChooser = new JFileChooser()
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")))
         fileChooser.addActionListener(fileChooserAction())
-
         fileChooserFrame = new JFrame("Open language example file")
         fileChooserFrame.getContentPane().add(fileChooser)
 
         frame = new JFrame("Generate key")
         FormUtil.addAllComponents(frame.getContentPane() as JComponent, [buttonPanel, fileTextAreaPanel])
-        frame.addWindowListener(FormUtil.onWindowCloseAction(parentForm.getFrame()))
+        frame.addWindowListener(FormUtil.onWindowClosingAction({ parentForm.getFrame().setVisible(true) }))
         frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS))
         frame.setSize(new Dimension(480, 800))
         frame.setMinimumSize(new Dimension(480, 800))
@@ -63,50 +63,41 @@ class GenerateKeyForm extends AbstractForm {
     }
 
     private ActionListener loadFileButtonAction() {
-        return new ActionListener() {
-            @Override
-            void actionPerformed(ActionEvent event) {
-                fileChooserFrame.setSize(480, 600)
-                fileChooserFrame.addWindowListener(FormUtil.onWindowCloseAction(frame))
-                frame.setVisible(false)
-                fileChooserFrame.setLocation(frame.getX(), frame.getY())
-                fileChooserFrame.setVisible(true)
-            }
+        return FormUtil.createActionListener {
+            fileChooserFrame.setSize(480, 600)
+            fileChooserFrame.addWindowListener(FormUtil.onWindowClosingAction({ frame.setVisible(true) }))
+            frame.setVisible(false)
+            fileChooserFrame.setLocation(frame.getLocation())
+            fileChooserFrame.setVisible(true)
         }
     }
 
     private ActionListener generateKeyButtonAction() {
         GenerateKeyForm currentForm = this
-        return new ActionListener() {
-            @Override
-            void actionPerformed(ActionEvent event) {
-                String fileText = FormUtil.getTextAreaFromPanelWithTitle(fileTextAreaPanel).getText()
-                EncryptionKey key = KeyGenerator.generateKey(fileText)
-                frame.setVisible(false)
-                new EditKeyForm(currentForm, key, fileText)
-            }
+        return FormUtil.createActionListener {
+            String fileText = FormUtil.getTextAreaFromPanelWithTitle(fileTextAreaPanel).getText()
+            EncryptionKey key = KeyGenerator.generateKey(fileText)
+            frame.setVisible(false)
+            new EditKeyForm(currentForm, key, fileText)
         }
     }
 
     private ActionListener fileChooserAction() {
-        return new ActionListener() {
-            @Override
-            void actionPerformed(ActionEvent event) {
-                if (event.actionCommand == JFileChooser.APPROVE_SELECTION) {
-                    String fileText = ""
-                    try {
-                        fileText = fileChooser
-                                .getSelectedFile()
-                                .getText()
-                    } catch (FileNotFoundException ignored) {
-                        FormUtil.showMessage("Error", "File could not be opened!")
-                    }
-                    FormUtil.getTextAreaFromPanelWithTitle(fileTextAreaPanel)
-                            .setText(fileText)
-                    FormUtil.close(fileChooserFrame)
-                } else if (event.actionCommand == JFileChooser.CANCEL_SELECTION) {
-                    FormUtil.close(fileChooserFrame)
+        return FormUtil.createActionListener { ActionEvent event ->
+            if (event.actionCommand == JFileChooser.APPROVE_SELECTION) {
+                String fileText = ""
+                try {
+                    fileText = fileChooser
+                            .getSelectedFile()
+                            .getText()
+                } catch (FileNotFoundException ignored) {
+                    FormUtil.showMessage("Error", "File could not be opened!")
                 }
+                FormUtil.getTextAreaFromPanelWithTitle(fileTextAreaPanel)
+                        .setText(fileText)
+                FormUtil.close(fileChooserFrame)
+            } else if (event.actionCommand == JFileChooser.CANCEL_SELECTION) {
+                FormUtil.close(fileChooserFrame)
             }
         }
     }
