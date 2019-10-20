@@ -56,7 +56,7 @@ class HelperUtil {
 
     static void writeFile(String path, String text) {
         File file = new File(path)
-        file.write(text)
+        file.write(text, "UTF-8")
     }
 
 }
