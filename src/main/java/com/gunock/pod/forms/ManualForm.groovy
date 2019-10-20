@@ -45,7 +45,8 @@ class ManualForm extends AbstractForm {
                 'character, generator checks if frequency of character is higher than average. If it so, then number ' +
                 'of characters to be assigned to it is multiplied by 2 and character frequency divided by average ' +
                 'frequency is added to it. After that random characters from cipher alphabet are assigned to character ' +
-                'from public text alphabet.'
+                'from public text alphabet. To decrease size of public text alphabet, generator turn whole public text ' +
+                'to lower case characters.'
 
         JPanel textPanel = new JPanel()
         FormUtil.setBoxLayout(textPanel, BoxLayout.Y_AXIS)

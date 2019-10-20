@@ -90,13 +90,17 @@ class EncryptionForm extends AbstractForm {
         frame.addWindowListener(FormUtil.onWindowClosingAction({ parentForm.getFrame().setVisible(true) }))
     }
 
-    ActionListener saveEncryptedFileButtonAction() {
+    private ActionListener saveEncryptedFileButtonAction() {
         return FormUtil.createActionListener {
             final String text = FormUtil.getTextAreaFromPanelWithTitle(encryptedTextPanel).getText()
             if (text.isBlank()) {
                 return
             }
             HelperUtil.writeFile(filenameField.getText(), text)
+            FormUtil.showMessage(
+                    "File saved",
+                    "File saved to '" + System.getProperty("user.dir") + "\\" + filenameField.getText() + "'"
+            )
         }
     }
 
@@ -135,7 +139,6 @@ class EncryptionForm extends AbstractForm {
             }
         }
     }
-
 
     private loadFile(ActionEvent event, boolean encrypted) {
         JFileChooser fileChooser = (JFileChooser) event.getSource()

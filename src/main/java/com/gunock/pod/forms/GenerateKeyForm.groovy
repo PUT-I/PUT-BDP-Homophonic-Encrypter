@@ -80,6 +80,10 @@ class GenerateKeyForm extends AbstractForm {
         GenerateKeyForm currentForm = this
         return FormUtil.createActionListener {
             String fileText = FormUtil.getTextAreaFromPanelWithTitle(fileTextAreaPanel).getText()
+            if (fileText.isBlank()) {
+                FormUtil.showMessage("Error", "Public text is empty!")
+                return
+            }
             EncryptionKey key = KeyGenerator.generateKey(fileText)
             frame.setVisible(false)
             new EditKeyForm(currentForm, key, fileText)
