@@ -54,14 +54,13 @@ class EditKeyForm extends AbstractForm {
 
     @Override
     void create() {
-        JPanel buttonPanel = createButtonPanel()
+        final JPanel buttonPanel = createButtonPanel()
 
         frame = new JFrame("Edit key")
+        FormUtil.setBoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS)
         frame.getContentPane().add(buttonPanel)
         mapToFrameElements(keyFilter.getEncryptionKey())
-
         frame.addWindowListener(onCloseAction())
-        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS))
         frame.setSize(400, 800)
         frame.setResizable(false)
     }

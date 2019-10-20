@@ -29,12 +29,12 @@ class MainForm extends AbstractForm {
 
     @Override
     void create() {
-        JPanel buttonPanel = createButtonPanel()
+        final JPanel buttonPanel = createButtonPanel()
 
         frame = new JFrame("Main Menu")
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
         frame.getContentPane().add(buttonPanel)
-        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS))
+        FormUtil.setBoxLayout(frame.getContentPane(), BoxLayout.X_AXIS)
         frame.setSize(400, 80)
         frame.setResizable(false)
     }

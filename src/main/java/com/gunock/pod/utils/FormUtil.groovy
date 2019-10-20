@@ -4,10 +4,12 @@ import com.gunock.pod.forms.BarChart
 
 import javax.swing.*
 import javax.swing.border.BevelBorder
+import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.event.WindowEvent
 import java.awt.event.WindowListener
+import java.util.List
 
 class FormUtil {
 
@@ -74,10 +76,18 @@ class FormUtil {
         component.setLayout(new BoxLayout(component, axis))
     }
 
+    static void setBoxLayout(Container container, int axis) {
+        setBoxLayout(container as JComponent, axis)
+    }
+
     static void addAllComponents(JComponent parent, List<JComponent> components) {
         for (JComponent component : components) {
             parent.add(component)
         }
+    }
+
+    static void addAllComponents(Container parent, List<JComponent> components) {
+        addAllComponents(parent as JComponent, components)
     }
 
     static ActionListener createActionListener(Closure action) {

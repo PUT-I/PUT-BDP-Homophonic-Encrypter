@@ -78,17 +78,13 @@ class EncryptionForm extends AbstractForm {
 
     @Override
     void create() {
-        JPanel upperButtonPanel = createUpperButtonPanel()
-        JPanel lowerButtonPanel = createLowerButtonPanel()
-        JPanel textAreaPanel = createTextAreaPanel()
+        final JPanel upperButtonPanel = createUpperButtonPanel()
+        final JPanel lowerButtonPanel = createLowerButtonPanel()
+        final JPanel textAreaPanel = createTextAreaPanel()
 
         frame = new JFrame("Encryption/Decryption")
-        FormUtil.setBoxLayout(frame.getContentPane() as JComponent, BoxLayout.Y_AXIS)
-        FormUtil.addAllComponents(
-                frame.getContentPane() as JComponent,
-                [upperButtonPanel, lowerButtonPanel, textAreaPanel]
-        )
-        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS))
+        FormUtil.setBoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS)
+        FormUtil.addAllComponents(frame.getContentPane(), [upperButtonPanel, lowerButtonPanel, textAreaPanel])
         frame.setSize(1000, 800)
         frame.setResizable(false)
         frame.addWindowListener(FormUtil.onWindowClosingAction({ parentForm.getFrame().setVisible(true) }))

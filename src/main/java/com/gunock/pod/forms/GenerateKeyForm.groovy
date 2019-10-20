@@ -41,22 +41,26 @@ class GenerateKeyForm extends AbstractForm {
         return buttonPanel
     }
 
-    @Override
-    void create() {
-        JPanel buttonPanel = createButtonPanel()
-
-        fileTextAreaPanel = FormUtil.createTextAreaWithTitle("Example text", true)
-
+    void createFileChooser() {
         fileChooser = new JFileChooser()
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")))
         fileChooser.addActionListener(fileChooserAction())
         fileChooserFrame = new JFrame("Open language example file")
         fileChooserFrame.getContentPane().add(fileChooser)
+    }
+
+    @Override
+    void create() {
+        final JPanel buttonPanel = createButtonPanel()
+
+        fileTextAreaPanel = FormUtil.createTextAreaWithTitle("Public text", true)
+
+        createFileChooser()
 
         frame = new JFrame("Generate key")
-        FormUtil.addAllComponents(frame.getContentPane() as JComponent, [buttonPanel, fileTextAreaPanel])
+        FormUtil.setBoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS)
+        FormUtil.addAllComponents(frame.getContentPane(), [buttonPanel, fileTextAreaPanel])
         frame.addWindowListener(FormUtil.onWindowClosingAction({ parentForm.getFrame().setVisible(true) }))
-        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS))
         frame.setSize(new Dimension(480, 800))
         frame.setMinimumSize(new Dimension(480, 800))
         frame.setResizable(false)

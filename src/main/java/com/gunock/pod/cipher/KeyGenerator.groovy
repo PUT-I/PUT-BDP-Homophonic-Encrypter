@@ -8,6 +8,12 @@ class KeyGenerator {
     final static String ENG_ALPHABET = "abcdefghijklmnopqrstuvwxyz,.!?&\"';()1234567890 \n"
     static Set<Character> cipherAlphabet
 
+    private static generateCipherAlphabet() {
+        Set<Character> alphabet1 = HelperUtil.generateAlphabet(33, 126)
+        Set<Character> alphabet2 = HelperUtil.generateAlphabet(173, 254)
+        cipherAlphabet = alphabet1 + alphabet2
+    }
+
     private static int generateRandomCharacterCount(Character c, Map<Character, Integer> analyzedAlphabet, int maxCharacters) {
         // Average of frequency of every character in analyzed alphabet
         final int analysisAverage = analyzedAlphabet.values().sum() / analyzedAlphabet.size()
@@ -23,12 +29,6 @@ class KeyGenerator {
             randomCharNumber *= 2 + (analyzedAlphabet.get(c) / analysisAverage)
         }
         return randomCharNumber
-    }
-
-    private static generateCipherAlphabet() {
-        Set<Character> alphabet1 = HelperUtil.generateAlphabet(33, 126)
-        Set<Character> alphabet2 = HelperUtil.generateAlphabet(173, 254)
-        cipherAlphabet = alphabet1 + alphabet2
     }
 
     static EncryptionKey generateKey(String textExample) {
@@ -50,10 +50,11 @@ class KeyGenerator {
         // Analyzed character frequency to improve generated key
         final Map<Character, Integer> analyzedAlphabet = HelperUtil.analyzeCharactersFrequency(textExample)
         Map<Character, Set<Character>> result = new TreeMap<>()
+        int counter = 0
 
         // Iterate over given alphabet
         for (Character c : textAlphabet) {
-            final int maxCharacters = (int) Math.floor(cipherAlphabet.size() / textAlphabet.size())
+            final int maxCharacters = (int) Math.floor(cipherAlphabet.size() / (textAlphabet.size() - counter))
 
             // Initialize key in result map
             result.put(c, new HashSet<Character>())
@@ -76,6 +77,8 @@ class KeyGenerator {
                 result.get(c).add(randomChar)
                 // Remove character from alphabet of cipher
                 cipherAlphabet.remove(randomChar)
+                // Increase counter to signal used public text alphabet character
+                counter++
             }
 
             // Sort characters added to key
