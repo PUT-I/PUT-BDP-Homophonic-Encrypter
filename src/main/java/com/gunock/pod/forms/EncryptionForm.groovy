@@ -17,13 +17,12 @@ import java.awt.event.ActionListener
 
 class EncryptionForm extends AbstractForm {
 
-    JFrame fileChooserFrame
+    private JFrame fileChooserFrame
     private JFrame chartFrame
-    JLabel keyStatusLabel
-    JPanel unencryptedTextPanel
-    JPanel encryptedTextPanel
-    JTextField filenameField
-
+    private JLabel keyStatusLabel
+    private JPanel unencryptedTextPanel
+    private JPanel encryptedTextPanel
+    private JTextField filenameField
     private EncryptionKey encryptionKey
 
     EncryptionForm(AbstractForm parentForm) {

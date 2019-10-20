@@ -8,8 +8,6 @@ import java.awt.event.WindowListener
 
 class ManualForm extends AbstractForm {
 
-    JFrame frame
-
     ManualForm(AbstractForm parentForm) {
         this.parentForm = parentForm
         create()
