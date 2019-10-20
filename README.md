@@ -8,6 +8,7 @@ Application allows to generate and save encryption and encrypt and decrypt data 
 Key generation consists of two view. In first view you enter public text (you can load it from file) to be used in generating key.
 Key generation uses text to calculate character frequency and fit key to it.
 In second view you can view frequency charts for public and encrypted texts, edit key and save it to file as JSON.
+Key editing is secured to not to input character that is already in key.
 
 ### Encryption/Decryption
 In encryption view you have several options. First you need to load encryption key (key status should show that key is loaded)
